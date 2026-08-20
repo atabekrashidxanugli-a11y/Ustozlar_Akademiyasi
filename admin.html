@@ -3,27 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel — Fayl Yuklash va Material Qo'shish</title>
+  <title>Admin Panel — Materiallar Boshqaruvi</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <style>
     body { font-family: sans-serif; margin: 40px; background-color: #f4f6f8; color: #1e293b; }
-    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    h1 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    h1, h2 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0; }
     .form-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 5px; font-weight: bold; }
     input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-    button { background: #2563eb; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+    button { background: #2563eb; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
     button:hover { background: #1d4ed8; }
+    .btn-delete { background: #ef4444; margin-left: 5px; }
+    .btn-delete:hover { background: #dc2626; }
+    .btn-edit { background: #f59e0b; }
+    .btn-edit:hover { background: #d97706; }
     .btn-back { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #475569; font-weight: bold; }
     #message { margin-top: 15px; font-weight: bold; text-align: center; }
+    
+    /* Materiallar ro'yxati uslubi */
+    .material-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; }
+    .material-info { max-width: 70%; }
+    .material-info h4 { margin: 0 0 5px 0; }
+    .material-info p { margin: 0; color: #64748b; font-size: 14px; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <a href="index.html" class="btn-back">← Bosh sahifaga qaytish</a>
-    <h1>Yangi material va fayl yuklash</h1>
+    <h1>Yangi material yuklash</h1>
     
     <form id="add-material-form">
       <div class="form-group">
@@ -53,21 +63,23 @@
         <input type="file" id="file-input" required>
       </div>
 
-      <button type="submit" id="submit-btn">Faylni yuklash va saqlash 🚀</button>
+      <button type="submit" id="submit-btn" style="width: 100%;">Faylni yuklash va saqlash 🚀</button>
     </form>
 
     <div id="message"></div>
+
+    <h2 style="margin-top: 40px;">Mavjud Materiallar Boshqaruvi</h2>
+    <div id="materials-list">Yuklanmoqda...</div>
   </div>
 
   <script>
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Admin huquqini tekshirish ('role' ustuni bo'yicha)
+    // 1. Admin huquqini tekshirish
     async function checkAdmin() {
       const { data: { session } } = await _supabase.auth.getSession();
-
       if (!session) {
-        alert("Bu sahifaga kirish uchun tizimga kirishingiz kerak!");
+        alert("Tizimga kirishingiz kerak!");
         window.location.href = 'login.html';
         return false;
       }
@@ -79,39 +91,106 @@
         .single();
 
       if (error || !profile || profile.role !== 'admin') {
-        alert("Sizda admin panelga kirish huquqi yo'q!");
+        alert("Sizda admin huquqi yo'q!");
         window.location.href = 'index.html';
         return false;
       }
-
       return true;
     }
 
-    // Fanlar ro'yxatini yuklash
+    // 2. Fanlar ro'yxatini yuklash
     async function fanlarniYuklash() {
       const select = document.getElementById('fan-select');
       const { data: fanlar, error } = await _supabase.from('fanlar').select('id, nomi');
 
-      if (error) {
-        select.innerHTML = '<option value="">Fanlarni yuklab bo\'lmadi</option>';
-        return;
-      }
-
+      if (error) return;
       select.innerHTML = '<option value="">-- Fanni tanlang --</option>';
       fanlar.forEach(fan => {
         select.innerHTML += `<option value="${fan.id}">${fan.nomi}</option>`;
       });
     }
 
-    // Form submit va fayl yuklash
+    // 3. Mavjud materiallar ro'yxatini olib kelish
+    async function materiallarniYuklash() {
+      const listContainer = document.getElementById('materials-list');
+      const { data: materials, error } = await _supabase
+        .from('materials')
+        .select('*, fanlar(nomi)')
+        .order('id', { ascending: false });
+
+      if (error) {
+        listContainer.innerHTML = "<p style='color:red;'>Materiallarni yuklashda xatolik!</p>";
+        return;
+      }
+
+      if (materials.length === 0) {
+        listContainer.innerHTML = "<p>Hozircha hech qanday material yuklanmagan.</p>";
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      materials.forEach(item => {
+        listContainer.innerHTML += `
+          <div class="material-item" id="item-${item.id}">
+            <div class="material-info">
+              <h4>${item.sarlavha} (${item.fanlar?.nomi || 'Fan korsatilmagan'})</h4>
+              <p><b>Mavzu:</b> ${item.mavzu}</p>
+            </div>
+            <div>
+              <button class="btn-edit" onclick="tahrirlash(${item.id}, '${item.sarlavha}', '${item.mavzu}')">✏️ Edit</button>
+              <button class="btn-delete" onclick="ochirish(${item.id})">🗑 Delete</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // 4. O'chirish funksiyasi
+    async function ochirish(id) {
+      if (!confirm("Haqiqatdan ham ushbu materialni o'chirmoqchimisiz?")) return;
+
+      const { error } = await _supabase
+        .from('materials')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert("O'chirishda xatolik yuz berdi: " + error.message);
+      } else {
+        alert("Material o'chirildi!");
+        materiallarniYuklash(); // Ro'yxatni yangilash
+      }
+    }
+
+    // 5. Tahrirlash funksiyasi
+    async function tahrirlash(id, eskiSarlavha, eskiMavzu) {
+      const yangiSarlavha = prompt("Yangi sarlavhani kiriting:", eskiSarlavha);
+      if (yangiSarlavha === null) return;
+
+      const yangiMavzu = prompt("Yangi mavzuni kiriting:", eskiMavzu);
+      if (yangiMavzu === null) return;
+
+      const { error } = await _supabase
+        .from('materials')
+        .update({ sarlavha: yangiSarlavha, mavzu: yangiMavzu })
+        .eq('id', id);
+
+      if (error) {
+        alert("Tahrirlashda xatolik: " + error.message);
+      } else {
+        alert("Material muvaffaqiyatli tahrirlandi!");
+        materiallarniYuklash();
+      }
+    }
+
+    // 6. Yangi fayl va material qo'shish
     document.getElementById('add-material-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       const msg = document.getElementById('message');
       const submitBtn = document.getElementById('submit-btn');
       
       msg.style.color = '#334155';
-      msg.innerText = "Fayl serverga yuklanmoqda...";
+      msg.innerText = "Fayl yuklanmoqda...";
       submitBtn.disabled = true;
 
       try {
@@ -122,67 +201,39 @@
         const fileInput = document.getElementById('file-input');
 
         const file = fileInput.files[0];
-        if (!file) {
-          alert("Iltimos, fayl tanlang!");
-          submitBtn.disabled = false;
-          return;
-        }
-
         const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         const fileName = `${Date.now()}_${cleanFileName}`;
 
-        // 1. Storage'ga yuklash
-        const { data: storageData, error: storageError } = await _supabase
-          .storage
-          .from('materiallar')
-          .upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: false
-          });
-
+        const { error: storageError } = await _supabase.storage.from('materiallar').upload(fileName, file);
         if (storageError) throw storageError;
 
-        // 2. URL manzilini olish
-        const { data: publicUrlData } = _supabase
-          .storage
-          .from('materiallar')
-          .getPublicUrl(fileName);
+        const { data: publicUrlData } = _supabase.storage.from('materiallar').getPublicUrl(fileName);
 
-        const fileUrl = publicUrlData.publicUrl;
-
-        // 3. Bazaga saqlash
-        const { error: dbError } = await _supabase
-          .from('materials')
-          .insert([
-            { 
-              fan_id: parseInt(fan_id), 
-              sarlavha: sarlavha, 
-              mavzu: mavzu, 
-              tavsif: tavsif, 
-              url: fileUrl 
-            }
-          ]);
+        const { error: dbError } = await _supabase.from('materials').insert([
+          { fan_id: parseInt(fan_id), sarlavha, mavzu, tavsif, url: publicUrlData.publicUrl }
+        ]);
 
         if (dbError) throw dbError;
 
         msg.style.color = 'green';
-        msg.innerText = "Fayl va material muvaffaqiyatli saqlandi! 🎉";
+        msg.innerText = "Material saqlandi! 🎉";
         document.getElementById('add-material-form').reset();
+        materiallarniYuklash(); // Yangi saqlangach ro'yxatni yangilash
 
       } catch (err) {
-        console.error("Xatolik:", err);
         msg.style.color = 'red';
-        msg.innerText = "Xatolik yuz berdi: " + (err.message || "Serverga ulanib bo'lmadi");
+        msg.innerText = "Xatolik: " + err.message;
       } finally {
         submitBtn.disabled = false;
       }
     });
 
-    // Boshlanishida ishlaydigan funksiya
+    // Ishga tushirish
     async function init() {
       const isAdmin = await checkAdmin();
       if (isAdmin) {
         fanlarniYuklash();
+        materiallarniYuklash();
       }
     }
 
