@@ -1,0 +1,112 @@
+﻿<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ustozlar Akademiyasi</title>
+  <style>
+    body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#182230}
+    header{background:linear-gradient(135deg,#2447c8,#7546d8);color:#fff;padding:18px 6%}
+    nav{display:flex;justify-content:space-between;align-items:center}
+    .logo{font-weight:800;font-size:24px}
+    a{color:inherit;text-decoration:none}
+    .hero{text-align:center;padding:70px 6%;background:linear-gradient(135deg,#eef2ff,#fff)}
+    .hero h1{font-size:42px;color:#213b91}
+    .hero p{max-width:760px;margin:auto;color:#596579;font-size:18px}
+    .btn{display:inline-block;margin-top:22px;padding:12px 22px;border-radius:10px;background:#3157d5;color:#fff;font-weight:bold}
+    .wrap{max-width:1200px;margin:auto;padding:45px 6%}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+    
+    /* Card dizayni va bosilish effekti */
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .card{
+      background:#fff;
+      padding:22px;
+      border-radius:16px;
+      box-shadow:0 7px 22px #1e325010;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(30, 50, 80, 0.15);
+    }
+    .card h3{margin:0}
+    .icon{font-size:28px}
+    footer{background:#182230;color:#dbe2ef;text-align:center;padding:30px}
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">📚 Ustozlar Akademiyasi</div>
+      <a href="login.html">🔐 Rahbar/Admin</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Barcha fanlar — yagona ta’lim platformasida</h1>
+    <p>O‘qituvchilar, tarbiyachilar va o‘quvchilar uchun dars materiallari, testlar, taqdimotlar, UMK, videolar va AI vositalari.</p>
+    <a class="btn" href="#fanlar">Fanlarni ko‘rish</a>
+  </section>
+
+  <section class="wrap" id="fanlar">
+    <h2>Fanlar</h2>
+    <div class="grid" id="fanlar-container">
+      <p>Fanlar yuklanmoqda...</p>
+    </div>
+  </section>
+
+  <footer>© 2026 Ustozlar Akademiyasi</footer>
+
+  <!-- Supabase JS kutubxonasi -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Kalitlar saqlangan config fayli -->
+  <script src="config.js"></script>
+
+  <script>
+    // 1. Supabase mijozini yaratish
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // 2. Fanlarni bazadan olish va ekranga chiqarish
+    async function fanlarniYuklash() {
+      const container = document.getElementById('fanlar-container');
+      
+      const { data, error } = await _supabase.from('fanlar').select('*');
+
+      if (error) {
+        console.error('Xatolik yuz berdi:', error.message);
+        container.innerHTML = '<p style="color:red">Fanlarni yuklashda xatolik yuz berdi!</p>';
+        return;
+      }
+
+      // Bazadagi ma'lumotlarni ekranga chiqarish
+      if (data && data.length > 0) {
+        container.innerHTML = '';
+        data.forEach(fan => {
+          container.innerHTML += `
+            <a href="fan.html?id=${fan.id}" class="card-link">
+              <div class="card">
+                <span class="icon">${fan.belgi || '📚'}</span>
+                <h3>${fan.nomi}</h3>
+              </div>
+            </a>
+          `;
+        });
+      } else {
+        container.innerHTML = '<p>Hozircha hech qanday fan topilmadi.</p>';
+      }
+    }
+
+    // Sahifa yuklanganda funksiyani ishga tushirish
+    fanlarniYuklash();
+  </script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fan Materiallari — Ustozlar Akademiyasi</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { color: #1e3a8a; margin-bottom: 10px; }
+
+        .filter-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .filter-section input, .filter-section select {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+        }
+        .search-input { flex: 2; min-width: 200px; }
+        .subject-select { flex: 1; min-width: 150px; }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .badge {
+            align-self: flex-start;
+            background-color: #e0e7ff;
+            color: #3730a3;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .card h3 { font-size: 18px; color: #1e293b; margin-bottom: 8px; }
+        .card p { font-size: 14px; color: #64748b; margin-bottom: 15px; flex-grow: 1; }
+        
+        .btn-group { display: flex; gap: 10px; }
+        .btn-preview {
+            flex: 1;
+            background: #e2e8f0;
+            color: #1e293b;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn-preview:hover { background: #cbd5e1; }
+        .download-btn {
+            flex: 1.5;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #2563eb;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .download-btn:hover { background-color: #1d4ed8; }
+        .download-btn svg { width: 18px; height: 18px; fill: white; }
+
+        /* Modal Oynalar */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .preview-frame {
+            width: 100%;
+            height: 450px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin: 15px 0;
+            background: #f8fafc;
+        }
+        .btn-tg { display: block; background: #0088cc; color: white; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-bottom: 12px; }
+        .btn-check { width: 100%; background: #16a34a; color: white; padding: 12px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; font-size: 15px; }
+        .btn-close { margin-top: 10px; background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 13px; }
+        .empty-text { grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 18px; padding: 40px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>O'quv va Fan Materiallari</h1>
+        <p>Materiallarni ko'rishingiz va to'liq yuklab olish uchun kanalimizga obuna bo'lishingiz mumkin</p>
+    </header>
+
+    <div class="filter-section">
+        <input type="text" id="searchInput" class="search-input" placeholder="Sarlavha yoki tavsif bo'yicha qidiruv...">
+        <select id="subjectFilter" class="subject-select">
+            <option value="all">Barcha fanlar</option>
+            <option value="Matematika">Matematika</option>
+            <option value="Fizika">Fizika</option>
+            <option value="Ona tili">Ona tili</option>
+            <option value="Ingliz tili">Ingliz tili</option>
+        </select>
+    </div>
+
+    <div id="materialsContainer" class="materials-grid">
+        <p class="empty-text">Materiallar yuklanmoqda...</p>
+    </div>
+</div>
+
+<!-- 1. Prevyu Modali -->
+<div class="modal" id="previewModal">
+    <div class="modal-content">
+        <h3 id="previewTitle" style="color: #1e3a8a;">Materialni Ko'rish</h3>
+        <iframe id="previewFrame" class="preview-frame" src=""></iframe>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">To'liq faylni yuklab olish uchun pastdagi tugmani bosing:</p>
+        <button class="download-btn" style="width: 100%;" onclick="switchToSubscribe()">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            To'liq variantni yuklab olish
+        </button>
+        <button class="btn-close" onclick="closeModals()">Yopish</button>
+    </div>
+</div>
+
+<!-- 2. Obuna Modali -->
+<div class="modal" id="subscribeModal">
+    <div class="modal-content" style="max-width: 420px;">
+        <h3 style="color: #1e3a8a; margin-bottom: 10px;">Telegram kanalga obuna bo'ling</h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Faylni yuklab olish uchun avval rasmiy Telegram kanalimizga obuna bo'ling!</p>
+        
+        <a href="https://t.me/Ustozlar_akademiyasi" target="_blank" class="btn-tg">📢 1. Kanalga o'tish va obuna bo'lish</a>
+        <button class="btn-check" onclick="verifyAndDownload()">✅ 2. Obunani tekshirish va Yuklash</button>
+        
+        <div id="statusMsg" style="margin-top: 10px; font-weight: 600; color: #16a34a; font-size: 13px;"></div>
+        <button class="btn-close" onclick="closeModals()">Yopish</button>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://dmpopkcyoaprbzmpkpde.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_HRDwTGY6lzTrgagW2ajXnQ_tluf2SSQ';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let allMaterials = [];
+    let currentFileUrl = '';
+
+    async function fetchMaterials() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('materials')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) throw error;
+
+            allMaterials = data || [];
+            renderMaterials(allMaterials);
+        } catch (err) {
+            console.error('Xatolik:', err);
+            document.getElementById('materialsContainer').innerHTML = 
+                '<p class="empty-text">Materiallarni yuklashda xatolik yuz berdi.</p>';
+        }
+    }
+
+    function renderMaterials(materials) {
+        const container = document.getElementById('materialsContainer');
+        container.innerHTML = '';
+
+        if (materials.length === 0) {
+            container.innerHTML = '<p class="empty-text">Hech qanday material topilmadi.</p>';
+            return;
+        }
+
+        materials.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            const title = item.sarlavha || item.title || 'Sarlavhasiz';
+            const subject = item.fanni_tanlang || item.fan || item.subject || 'Matematika';
+            const desc = item.tavsif || item.description || 'Tavsif berilmagan';
+            const fileUrl = item.file_url || `${SUPABASE_URL}/storage/v1/object/public/materiallar/${item.file_name}`;
+
+            card.innerHTML = `
+                <div>
+                    <span class="badge">${subject}</span>
+                    <h3>${title}</h3>
+                    <p>${desc}</p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn-preview" onclick="openPreview('${title.replace(/'/g, "\\'")}', '${fileUrl}')">
+                        👁 Ko'rish
+                    </button>
+                    <button class="download-btn" onclick="openSubscribeModal('${fileUrl}')">
+                        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Yuklab olish
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    function openPreview(title, fileUrl) {
+        currentFileUrl = fileUrl;
+        document.getElementById('previewTitle').innerText = title;
+        
+        const isPdf = fileUrl.toLowerCase().endsWith('.pdf');
+        
+        if (isPdf) {
+            document.getElementById('previewFrame').src = fileUrl;
+        } else {
+            document.getElementById('previewFrame').src = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
+        }
+        
+        document.getElementById('previewModal').style.display = 'flex';
+    }
+
+    function openSubscribeModal(fileUrl) {
+        currentFileUrl = fileUrl;
+        document.getElementById('previewModal').style.display = 'none';
+        document.getElementById('statusMsg').innerText = '';
+        document.getElementById('subscribeModal').style.display = 'flex';
+    }
+
+    function switchToSubscribe() {
+        document.getElementById('previewModal').style.display = 'none';
+        document.getElementById('statusMsg').innerText = '';
+        document.getElementById('subscribeModal').style.display = 'flex';
+    }
+
+    function closeModals() {
+        document.getElementById('previewModal').style.display = 'none';
+        document.getElementById('subscribeModal').style.display = 'none';
+        document.getElementById('previewFrame').src = '';
+    }
+
+    function verifyAndDownload() {
+        const status = document.getElementById('statusMsg');
+        status.innerText = 'Obuna tasdiqlandi! Fayl yuklanmoqda...';
+
+        setTimeout(() => {
+            window.open(currentFileUrl, '_blank');
+            closeModals();
+        }, 1000);
+    }
+
+    function filterMaterials() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const selectedSubject = document.getElementById('subjectFilter').value;
+
+        const filtered = allMaterials.filter(item => {
+            const title = (item.sarlavha || item.title || '').toLowerCase();
+            const desc = (item.tavsif || item.description || '').toLowerCase();
+            const subject = item.fanni_tanlang || item.fan || item.subject || 'Matematika';
+
+            const matchesSearch = title.includes(searchValue) || desc.includes(searchValue);
+            const matchesSubject = selectedSubject === 'all' || subject === selectedSubject;
+
+            return matchesSearch && matchesSubject;
+        });
+
+        renderMaterials(filtered);
+    }
+
+    document.getElementById('searchInput').addEventListener('input', filterMaterials);
+    document.getElementById('subjectFilter').addEventListener('change', filterMaterials);
+
+    window.addEventListener('DOMContentLoaded', fetchMaterials);
+</script>
+</body>
+</html>

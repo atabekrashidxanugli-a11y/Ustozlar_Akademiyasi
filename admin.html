@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Fayl Yuklash va Material Qo'shish</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 40px; background-color: #f4f6f8; color: #1e293b; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    h1 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+    button { background: #2563eb; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+    button:hover { background: #1d4ed8; }
+    .btn-back { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #475569; font-weight: bold; }
+    #message { margin-top: 15px; font-weight: bold; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="index.html" class="btn-back">← Bosh sahifaga qaytish</a>
+    <h1>Yangi material va fayl yuklash</h1>
+    
+    <form id="add-material-form">
+      <div class="form-group">
+        <label for="fan-select">Fanni tanlang:</label>
+        <select id="fan-select" required>
+          <option value="">Yuklanmoqda...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="sarlavha">Sarlavha:</label>
+        <input type="text" id="sarlavha" placeholder="Masalan: 6-sinf Fizika darslik" required>
+      </div>
+
+      <div class="form-group">
+        <label for="mavzu">Mavzu:</label>
+        <input type="text" id="mavzu" placeholder="Masalan: Zichlik va massa" required>
+      </div>
+
+      <div class="form-group">
+        <label for="tavsif">Tavsif (qisqacha):</label>
+        <textarea id="tavsif" rows="3" placeholder="Material haqida qo'shimcha ma'lumot..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="file-input">Darslik faylini tanlang (PDF, Docx, PPTX):</label>
+        <input type="file" id="file-input" required>
+      </div>
+
+      <button type="submit" id="submit-btn">Faylni yuklash va saqlash 🚀</button>
+    </form>
+
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function fanlarniYuklash() {
+      const select = document.getElementById('fan-select');
+      const { data: fanlar, error } = await _supabase.from('fanlar').select('id, nomi');
+
+      if (error) {
+        select.innerHTML = '<option value="">Fanlarni yuklab bo\'lmadi</option>';
+        return;
+      }
+
+      select.innerHTML = '<option value="">-- Fanni tanlang --</option>';
+      fanlar.forEach(fan => {
+        select.innerHTML += `<option value="${fan.id}">${fan.nomi}</option>`;
+      });
+    }
+
+    document.getElementById('add-material-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('message');
+      const submitBtn = document.getElementById('submit-btn');
+      
+      msg.style.color = '#334155';
+      msg.innerText = "Fayl serverga yuklanmoqda...";
+      submitBtn.disabled = true;
+
+      const fan_id = document.getElementById('fan-select').value;
+      const sarlavha = document.getElementById('sarlavha').value;
+      const mavzu = document.getElementById('mavzu').value;
+      const tavsif = document.getElementById('tavsif').value;
+      const fileInput = document.getElementById('file-input');
+
+      const file = fileInput.files[0];
+      if (!file) {
+        msg.style.color = 'red';
+        msg.innerText = "Iltimos, fayl tanlang!";
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const fileName = `${Date.now()}_${file.name}`;
+
+      try {
+        const { data: storageData, error: storageError } = await _supabase
+          .storage
+          .from('materiallar')
+          .upload(fileName, file);
+
+        if (storageError) throw storageError;
+
+        const { data: publicUrlData } = _supabase
+          .storage
+          .from('materiallar')
+          .getPublicUrl(fileName);
+
+        const fileUrl = publicUrlData.publicUrl;
+
+        const { error: dbError } = await _supabase.from('materials').insert([
+          { fan_id, sarlavha, mavzu, tavsif, url: fileUrl }
+        ]);
+
+        if (dbError) throw dbError;
+
+        msg.style.color = 'green';
+        msg.innerText = "Fayl va material muvaffaqiyatli saqlandi! 🎉";
+        document.getElementById('add-material-form').reset();
+
+      } catch (err) {
+        console.error(err);
+        msg.style.color = 'red';
+        msg.innerText = "Xatolik yuz berdi: " + err.message;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    fanlarniYuklash();
+  </script>
+
+</body>
+</html>
