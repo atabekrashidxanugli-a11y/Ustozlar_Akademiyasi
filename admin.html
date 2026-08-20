@@ -62,7 +62,7 @@
   <script>
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 1. Admin xavfsizligi tekshiruvi (Baza ustuni nomi 'admin' ga moslandi)
+    // Admin huquqini tekshirish ('role' ustuni bo'yicha)
     async function checkAdmin() {
       const { data: { session } } = await _supabase.auth.getSession();
 
@@ -72,14 +72,13 @@
         return false;
       }
 
-      // 'profiles' jadvalidagi 'admin' ustunini tekshiramiz
       const { data: profile, error } = await _supabase
         .from('profiles')
-        .select('admin')
+        .select('role')
         .eq('id', session.user.id)
         .single();
 
-      if (error || !profile || profile.admin !== 'admin') {
+      if (error || !profile || profile.role !== 'admin') {
         alert("Sizda admin panelga kirish huquqi yo'q!");
         window.location.href = 'index.html';
         return false;
@@ -88,7 +87,7 @@
       return true;
     }
 
-    // 2. Fanlar ro'yxatini yuklash
+    // Fanlar ro'yxatini yuklash
     async function fanlarniYuklash() {
       const select = document.getElementById('fan-select');
       const { data: fanlar, error } = await _supabase.from('fanlar').select('id, nomi');
@@ -104,7 +103,7 @@
       });
     }
 
-    // 3. Fayl va material qo'shish jarayoni
+    // Form submit va fayl yuklash
     document.getElementById('add-material-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -129,11 +128,10 @@
           return;
         }
 
-        // Fayl nomidagi kirill va simvollarni xavfsiz o'tkazish
         const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         const fileName = `${Date.now()}_${cleanFileName}`;
 
-        // Storage'ga fayl yuklash
+        // 1. Storage'ga yuklash
         const { data: storageData, error: storageError } = await _supabase
           .storage
           .from('materiallar')
@@ -144,7 +142,7 @@
 
         if (storageError) throw storageError;
 
-        // Public URL manzilini olish
+        // 2. URL manzilini olish
         const { data: publicUrlData } = _supabase
           .storage
           .from('materiallar')
@@ -152,7 +150,7 @@
 
         const fileUrl = publicUrlData.publicUrl;
 
-        // Bazaga saqlash ('materials' jadvaliga)
+        // 3. Bazaga saqlash
         const { error: dbError } = await _supabase
           .from('materials')
           .insert([
@@ -180,7 +178,7 @@
       }
     });
 
-    // Sahifa yuklanishida ishlaydi
+    // Boshlanishida ishlaydigan funksiya
     async function init() {
       const isAdmin = await checkAdmin();
       if (isAdmin) {
