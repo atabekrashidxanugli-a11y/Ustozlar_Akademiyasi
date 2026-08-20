@@ -31,20 +31,20 @@
 
   <script>
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const CHANNEL_URL = "https://t.me/ustozlar_akademiyasi"; // Kanalingiz havolasi
+    // Sizning aniq Telegram kanalingiz havolasi
+    const CHANNEL_URL = "https://t.me/ustozlarakademiyasi1996"; 
 
     const urlParams = new URLSearchParams(window.location.search);
     const fanId = urlParams.get('id') || 1;
 
-    // Obunani tekshirish va faylni ochish
+    // Obunani tasdiqlatib faylni ochish
     function openFileWithCheck(fileUrl) {
       if (!fileUrl) {
         alert("Fayl havolasi topilmadi!");
         return;
       }
       
-      // Kanalga a'zo bo'lganini tasdiqlab faylni ochadi
-      let isSubscribed = confirm("Kanalimizga obuna bo'ldingizmi?\n\n'OK' tugmasini bosing va fayl ochiladi.");
+      let isSubscribed = confirm("Kanalimizga obuna bo'ldingizmi?\n\n'OK' tugmasini bosing va to'liq fayl ochiladi.");
       if (isSubscribed) {
         window.open(fileUrl, '_blank');
       } else {
