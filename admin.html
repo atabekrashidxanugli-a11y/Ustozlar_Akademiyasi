@@ -1,26 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Panel - Ustozlar Akademiyasi</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Fayl Yuklash va Material Qo'shish</title>
   
-  <!-- Supabase va Himoya skripti (Boshida turishi shart) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+  
+  <!-- Xavfsizlik va Admin ekanligini tekshiruvchi himoya skripti -->
   <script>
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function checkAdminAccess() {
       const { data: { session } } = await _supabase.auth.getSession();
       
-      // Agar kirmagan bo'lsa - login sahifasiga otish
+      // Agar tizimga kirmagan bo'lsa - login sahifasiga o'tkazish
       if (!session) {
         window.location.href = 'login.html';
         return;
       }
 
-      // Rolini tekshirish
+      // Foydalanuvchi roli admin ekanligini bazadan tekshirish
       const { data: profile, error } = await _supabase
         .from('profiles')
         .select('role')
@@ -33,46 +34,152 @@
       }
     }
 
-    // Sahifa ochilishi bilan tekshirishni boshlash
+    // Sahifa ochilishi bilanoq tekshiruvni ishga tushirish
     checkAdminAccess();
   </script>
 
   <style>
-    body { font-family: Arial, sans-serif; background: #f5f7fb; margin: 0; padding: 20px; }
-    .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; margin-bottom: 20px; }
-    h1 { color: #213b91; margin: 0; }
-    button.logout { background: #d9534f; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    button.logout:hover { background: #c9302c; }
+    body { font-family: sans-serif; margin: 40px; background-color: #f4f6f8; color: #1e293b; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    h1 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0; }
     .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
-    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-    button.submit-btn { background: #3157d5; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    button.submit-btn:hover { background: #2447c8; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+    button { background: #2563eb; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+    button:hover { background: #1d4ed8; }
+    .btn-back { display: inline-block; margin-bottom: 15px; text-decoration: none; color: #475569; font-weight: bold; }
+    .logout-btn { background: #dc2626; margin-top: 10px; }
+    .logout-btn:hover { background: #b91c1c; }
+    #message { margin-top: 15px; font-weight: bold; text-align: center; }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <div class="header">
-      <h1>🔐 Admin Panel</h1>
-      <button class="logout" onclick="logout()">Tizimdan chiqish</button>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <a href="index.html" class="btn-back">← Bosh sahifaga qaytish</a>
+      <button onclick="logout()" class="logout-btn" style="width: auto; padding: 6px 12px; font-size: 13px;">Chiqish</button>
     </div>
+    
+    <h1>Yangi material va fayl yuklash</h1>
+    
+    <form id="add-material-form">
+      <div class="form-group">
+        <label for="fan-select">Fanni tanlang:</label>
+        <select id="fan-select" required>
+          <option value="">Yuklanmoqda...</option>
+        </select>
+      </div>
 
-    <p>Xush kelibsiz! Bu yerdan fanlarga yangi materiallar qo'shishingiz va boshqarishingiz mumkin.</p>
+      <div class="form-group">
+        <label for="sarlavha">Sarlavha:</label>
+        <input type="text" id="sarlavha" placeholder="Masalan: 6-sinf Fizika darslik" required>
+      </div>
 
-    <!-- Material qo'shish formasi (Agar o'zingizda boshqa forma bo'lsa, uni shu yerga qo'shishingiz mumkin) -->
-    <div style="background: #f9fbff; padding: 20px; border-radius: 8px; border: 1px solid #e1e8f0; margin-top: 20px;">
-      <h3>Yangi material qo'shish</h3>
-      <p style="color: #666; font-size: 14px;">Bu yerga o'zingizning eski material qo'shish formangizni ulab qo'yishingiz mumkin.</p>
-    </div>
+      <div class="form-group">
+        <label for="mavzu">Mavzu:</label>
+        <input type="text" id="mavzu" placeholder="Masalan: Zichlik va massa" required>
+      </div>
+
+      <div class="form-group">
+        <label for="tavsif">Tavsif (qisqacha):</label>
+        <textarea id="tavsif" rows="3" placeholder="Material haqida qo'shimcha ma'lumot..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="file-input">Darslik faylini tanlang (PDF, Docx, PPTX):</label>
+        <input type="file" id="file-input" required>
+      </div>
+
+      <button type="submit" id="submit-btn">Faylni yuklash va saqlash 🚀</button>
+    </form>
+
+    <div id="message"></div>
   </div>
 
   <script>
+    async function fanlarniYuklash() {
+      const select = document.getElementById('fan-select');
+      const { data: fanlar, error } = await _supabase.from('fanlar').select('id, nomi');
+
+      if (error) {
+        select.innerHTML = '<option value="">Fanlarni yuklab bo\'lmadi</option>';
+        return;
+      }
+
+      select.innerHTML = '<option value="">-- Fanni tanlang --</option>';
+      fanlar.forEach(fan => {
+        select.innerHTML += `<option value="${fan.id}">${fan.nomi}</option>`;
+      });
+    }
+
+    document.getElementById('add-material-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('message');
+      const submitBtn = document.getElementById('submit-btn');
+      
+      msg.style.color = '#334155';
+      msg.innerText = "Fayl serverga yuklanmoqda...";
+      submitBtn.disabled = true;
+
+      const fan_id = document.getElementById('fan-select').value;
+      const sarlavha = document.getElementById('sarlavha').value;
+      const mavzu = document.getElementById('mavzu').value;
+      const tavsif = document.getElementById('tavsif').value;
+      const fileInput = document.getElementById('file-input');
+
+      const file = fileInput.files[0];
+      if (!file) {
+        msg.style.color = 'red';
+        msg.innerText = "Iltimos, fayl tanlang!";
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const fileName = `${Date.now()}_${file.name}`;
+
+      try {
+        const { data: storageData, error: storageError } = await _supabase
+          .storage
+          .from('materiallar')
+          .upload(fileName, file);
+
+        if (storageError) throw storageError;
+
+        const { data: publicUrlData } = _supabase
+          .storage
+          .from('materiallar')
+          .getPublicUrl(fileName);
+
+        const fileUrl = publicUrlData.publicUrl;
+
+        const { error: dbError } = await _supabase.from('materials').insert([
+          { fan_id, sarlavha, mavzu, tavsif, url: fileUrl }
+        ]);
+
+        if (dbError) throw dbError;
+
+          msg.style.color = 'green';
+          msg.innerText = "Fayl va material muvaffaqiyatli saqlandi! 🎉";
+          document.getElementById('add-material-form').reset();
+
+      } catch (err) {
+        console.error(err);
+        msg.style.color = 'red';
+        msg.innerText = "Xatolik yuz berdi: " + err.message;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
     // Tizimdan chiqish funksiyasi
     async function logout() {
       await _supabase.auth.signOut();
       window.location.href = 'login.html';
     }
+
+    fanlarniYuklash();
   </script>
+
 </body>
 </html>
