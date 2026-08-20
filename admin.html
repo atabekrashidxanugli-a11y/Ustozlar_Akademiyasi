@@ -5,23 +5,22 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Admin Panel - Ustozlar Akademiyasi</title>
   
-  <!-- Supabase va Himoya skripti -->
+  <!-- Supabase va Himoya skripti (Boshida turishi shart) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script>
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Sahifa ochilishi bilanoq admin ekanligini tekshirish
     async function checkAdminAccess() {
       const { data: { session } } = await _supabase.auth.getSession();
       
-      // 1. Tizimga kirilmagan bo'lsa, login sahifasiga otib yuborish
+      // Agar kirmagan bo'lsa - login sahifasiga otish
       if (!session) {
         window.location.href = 'login.html';
         return;
       }
 
-      // 2. Foydalanuvchi roli admin ekanligini bazadan tekshirish
+      // Rolini tekshirish
       const { data: profile, error } = await _supabase
         .from('profiles')
         .select('role')
@@ -29,31 +28,47 @@
         .single();
 
       if (error || !profile || profile.role !== 'admin') {
-        alert("Sizda ushbu sahifaga kirish huquqi yo'q!");
+        alert("Sizda bu sahifaga kirish huquqi yo'q!");
         window.location.href = 'index.html';
       }
     }
 
+    // Sahifa ochilishi bilan tekshirishni boshlash
     checkAdminAccess();
   </script>
 
   <style>
     body { font-family: Arial, sans-serif; background: #f5f7fb; margin: 0; padding: 20px; }
-    .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    h1 { color: #213b91; }
-    button.logout { background: #d9534f; color: #white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; float: right; }
+    .container { max-width: 900px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; margin-bottom: 20px; }
+    h1 { color: #213b91; margin: 0; }
+    button.logout { background: #d9534f; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button.logout:hover { background: #c9302c; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    button.submit-btn { background: #3157d5; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button.submit-btn:hover { background: #2447c8; }
   </style>
 </head>
 <body>
   <div class="container">
-    <button class="logout" onclick="logout()">Chiqish</button>
-    <h1>🔐 Admin Panel</h1>
-    <p>Xush kelibsiz! Bu yerda fan materiallarini boshqarishingiz mumkin.</p>
-    
-    <!-- Sizning admin funksiyalaringiz (material qo'shish formasi va hokazo) shu yerda bo'ladi -->
+    <div class="header">
+      <h1>🔐 Admin Panel</h1>
+      <button class="logout" onclick="logout()">Tizimdan chiqish</button>
+    </div>
+
+    <p>Xush kelibsiz! Bu yerdan fanlarga yangi materiallar qo'shishingiz va boshqarishingiz mumkin.</p>
+
+    <!-- Material qo'shish formasi (Agar o'zingizda boshqa forma bo'lsa, uni shu yerga qo'shishingiz mumkin) -->
+    <div style="background: #f9fbff; padding: 20px; border-radius: 8px; border: 1px solid #e1e8f0; margin-top: 20px;">
+      <h3>Yangi material qo'shish</h3>
+      <p style="color: #666; font-size: 14px;">Bu yerga o'zingizning eski material qo'shish formangizni ulab qo'yishingiz mumkin.</p>
+    </div>
   </div>
 
   <script>
+    // Tizimdan chiqish funksiyasi
     async function logout() {
       await _supabase.auth.signOut();
       window.location.href = 'login.html';
