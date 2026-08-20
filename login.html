@@ -1,1 +1,66 @@
-<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin kirish</title><style>body{font-family:Arial;background:#f4f7fb;display:grid;place-items:center;min-height:100vh;margin:0}.box{background:#fff;padding:32px;border-radius:18px;width:min(390px,85%);box-shadow:0 10px 30px #0001}input,button{width:100%;padding:13px;margin:8px 0;border-radius:9px;border:1px solid #ccd3e0;box-sizing:border-box}button{background:#3157d5;color:#fff;border:0;font-weight:bold}.err{color:#c62828}</style></head><body><div class="box"><h2>🔐 Rahbar/Admin kirishi</h2><input id="email" type="email" placeholder="Email"><input id="password" type="password" placeholder="Parol"><button id="login">Kirish</button><p id="msg" class="err"></p><a href="index.html">← Bosh sahifa</a></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script>const db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);document.getElementById('login').onclick=async()=>{const email=document.getElementById('email').value,password=document.getElementById('password').value;const {error}=await db.auth.signInWithPassword({email,password});if(error)document.getElementById('msg').textContent=error.message;else location.href='admin.html'};</script></body></html>
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Kirish - Ustozlar Akademiyasi</title>
+  <style>
+    body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;display:flex;justify-content:center;align-items:center;height:100vh}
+    .login-card{background:#fff;padding:30px;border-radius:16px;box-shadow:0 10px 25px rgba(30,50,80,0.15);width:100%;max-width:380px}
+    h2{margin-top:0;color:#213b91;text-align:center}
+    input{width:100%;padding:12px;margin:10px 0;border:1px solid #dbe2ef;border-radius:8px;box-sizing:border-box}
+    button{width:100%;padding:12px;background:#3157d5;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px}
+    button:hover{background:#2447c8}
+    .error{color:red;font-size:14px;text-align:center;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h2>🔐 Rahbar / Admin</h2>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Elektron pochta (Email)" required>
+      <input type="password" id="password" placeholder="Parol" required>
+      <button type="submit">Kirish</button>
+      <div id="error-msg" class="error"></div>
+    </form>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('error-msg');
+
+      // 1. Tizimga kirish
+      const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorMsg.textContent = "Xatolik: E-pochta yoki parol noto'g'ri!";
+        return;
+      }
+
+      // 2. Foydalanuvchi haqiqatan ham admin ekanligini tekshirish
+      const { data: profile, profileError } = await _supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError || !profile || profile.role !== 'admin') {
+        errorMsg.textContent = "Sizda admin huquqi yo'q!";
+        await _supabase.auth.signOut(); // Chiqib yuborish
+        return;
+      }
+
+      // Agar hammasi joyida bo'lsa, admin panelga o'tkazish
+      window.location.href = 'admin.html';
+    });
+  </script>
+</body>
+</html>
