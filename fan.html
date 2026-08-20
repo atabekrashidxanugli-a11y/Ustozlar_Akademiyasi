@@ -10,10 +10,11 @@
     body { font-family: sans-serif; margin: 40px; background-color: #f4f6f8; color: #1e293b; }
     .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     h1 { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
-    .material-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+    .material-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
     .material-card h3 { margin: 0 0 8px 0; color: #2563eb; }
+    .file-preview { width: 100%; height: 350px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 10px; }
     .btn-back { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #475569; font-weight: bold; }
-    .btn-download { display: inline-block; margin-top: 10px; padding: 8px 16px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; font-size: 14px; }
+    .btn-download { display: inline-block; margin-top: 12px; padding: 10px 18px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; cursor: pointer; border: none; font-size: 14px; font-weight: bold; }
     .btn-download:hover { background: #1d4ed8; }
   </style>
 </head>
@@ -25,25 +26,21 @@
   </div>
 
   <script>
-    // Supabase obyektini to'g'ri bog'lash
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
-    // Telegram Bot va Kanal sozlamalari
     const BOT_TOKEN = "8915100988:AAHbL8w8l8_8OoN-y2jremON1g42BXJ2PbA";
-    const CHANNEL_ID = "@ustozlar_akademiyasi"; // Agar kanal username'i boshqacha bo'lsa, shu yerga yozing
+    const CHANNEL_ID = "@ustozlar_akademiyasi";
 
-    // URL-dan fan ID-sini olish (masalan: fan.html?id=1)
     const urlParams = new URLSearchParams(window.location.search);
     const fanId = urlParams.get('id') || 1;
 
-    // Telegram obunasini tekshirish va faylni ochish funksiyasi
     async function checkSubscriptionAndOpen(fileUrl) {
       if (!fileUrl) {
         alert("Fayl havolasi topilmadi!");
         return;
       }
 
-      let userInput = prompt("Faylni ko'rish uchun Telegram username yoki ID ingizni kiriting (masalan: @username):");
+      let userInput = prompt("To'liq faylni ko'rish/yuklash uchun Telegram username yoki ID ingizni kiriting (masalan: @username):");
 
       if (!userInput) {
         alert("Obunani tekshirish uchun Telegram username kiritishingiz shart!");
@@ -59,12 +56,12 @@
         if (data.ok && ['creator', 'administrator', 'member'].includes(data.result.status)) {
           window.open(fileUrl, '_blank');
         } else {
-          alert("Faylni ko'rish uchun avval kanalimizga obuna bo'ling!");
+          alert("To'liq faylni yuklab olish uchun avval kanalimizga obuna bo'ling!");
           window.open(`https://t.me/${CHANNEL_ID.replace('@', '')}`, '_blank');
         }
       } catch (error) {
         console.error("Xatolik:", error);
-        alert("Obunani tekshirishda xatolik yuz berdi. Telegram username to'g'ri kiritilganini tekshiring.");
+        alert("Obunani tekshirishda xatolik yuz berdi. Username to'g'ri kiritilganini tekshiring.");
       }
     }
 
@@ -72,8 +69,7 @@
       const container = document.getElementById('materials-container');
 
       try {
-        // 1. Fan nomini olish
-        const { data: fan, error: fanError } = await _supabase
+        const { data: fan } = await _supabase
           .from('fanlar')
           .select('nomi')
           .eq('id', fanId)
@@ -83,7 +79,6 @@
           document.getElementById('fan-nomi').innerText = fan.nomi + " fanidan materiallar";
         }
 
-        // 2. Ushbu fanga tegishli materiallarni yuklash
         const { data: materials, error: matError } = await _supabase
           .from('materials')
           .select('*')
@@ -94,14 +89,20 @@
         if (materials && materials.length > 0) {
           container.innerHTML = '';
           materials.forEach(item => {
-            const fileLink = item.url ? `<button onclick="checkSubscriptionAndOpen('${item.url}')" class="btn-download">Faylni ko'rish / Yuklab olish</button>` : '';
-            
+            let previewHtml = '';
+            if (item.url) {
+              // Google Docs Viewer orqali hujjatni oldindan ko'rish (predprosmotr)
+              previewHtml = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(item.url)}&embedded=true" class="file-preview"></iframe>`;
+            }
+
             container.innerHTML += `
               <div class="material-card">
                 <h3>${item.sarlavha || 'Material'}</h3>
                 <p><strong>Mavzu:</strong> ${item.mavzu || '-'}</p>
                 ${item.tavsif ? `<p>${item.tavsif}</p>` : ''}
-                ${fileLink}
+                ${previewHtml}
+                <br>
+                ${item.url ? `<button onclick="checkSubscriptionAndOpen('${item.url}')" class="btn-download">To'liq ko'rish / Yuklab olish</button>` : ''}
               </div>
             `;
           });
@@ -111,7 +112,7 @@
 
       } catch (err) {
         console.error("Xatolik yuz berdi:", err.message);
-        container.innerHTML = '<p style="color:red">Ma\'lumotlarni yuklashda xatolik yuz berdi. Console oynasini tekshiring.</p>';
+        container.innerHTML = '<p style="color:red">Ma\'lumotlarni yuklashda xatolik yuz berdi.</p>';
       }
     }
 
