@@ -62,6 +62,33 @@
   <script>
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // 🔒 1-MUAMMO YECHIMI: Admin huquqini va kirishni tekshirish
+    async function checkAdmin() {
+      const { data: { session } } = await _supabase.auth.getSession();
+
+      // 1. Tizimga kirmagan bo'lsa -> Login sahifasiga haydash
+      if (!session) {
+        alert("Bu sahifaga kirish uchun tizimga kirishingiz kerak!");
+        window.location.href = 'login.html';
+        return false;
+      }
+
+      // 2. Tizimga kirgan bo'lsa, 'profiles' jadvalidan rolini tekshirish
+      const { data: profile, error } = await _supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error || !profile || profile.role !== 'admin') {
+        alert("Sizda admin panelga kirish huquqi yo'q!");
+        window.location.href = 'index.html';
+        return false;
+      }
+
+      return true;
+    }
+
     async function fanlarniYuklash() {
       const select = document.getElementById('fan-select');
       const { data: fanlar, error } = await _supabase.from('fanlar').select('id, nomi');
@@ -103,6 +130,7 @@
       const fileName = `${Date.now()}_${file.name}`;
 
       try {
+        // 📁 Storage'ga fayl yuklash
         const { data: storageData, error: storageError } = await _supabase
           .storage
           .from('materiallar')
@@ -110,6 +138,7 @@
 
         if (storageError) throw storageError;
 
+        // 🔗 Fayl URL manzilini olish
         const { data: publicUrlData } = _supabase
           .storage
           .from('materiallar')
@@ -117,6 +146,7 @@
 
         const fileUrl = publicUrlData.publicUrl;
 
+        // 💾 Bazaga saqlash
         const { error: dbError } = await _supabase.from('materials').insert([
           { fan_id, sarlavha, mavzu, tavsif, url: fileUrl }
         ]);
@@ -136,7 +166,15 @@
       }
     });
 
-    fanlarniYuklash();
+    // Sahifa yuklanishi bilan tekshirish va fanlarni olib kelish
+    async function init() {
+      const isAdmin = await checkAdmin();
+      if (isAdmin) {
+        fanlarniYuklash();
+      }
+    }
+
+    init();
   </script>
 
 </body>
