@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
@@ -62,25 +62,24 @@
   <script>
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 🔒 1-MUAMMO YECHIMI: Admin huquqini va kirishni tekshirish
+    // 1. Admin xavfsizligi tekshiruvi (Baza ustuni nomi 'admin' ga moslandi)
     async function checkAdmin() {
       const { data: { session } } = await _supabase.auth.getSession();
 
-      // 1. Tizimga kirmagan bo'lsa -> Login sahifasiga haydash
       if (!session) {
         alert("Bu sahifaga kirish uchun tizimga kirishingiz kerak!");
         window.location.href = 'login.html';
         return false;
       }
 
-      // 2. Tizimga kirgan bo'lsa, 'profiles' jadvalidan rolini tekshirish
+      // 'profiles' jadvalidagi 'admin' ustunini tekshiramiz
       const { data: profile, error } = await _supabase
         .from('profiles')
-        .select('role')
+        .select('admin')
         .eq('id', session.user.id)
         .single();
 
-      if (error || !profile || profile.role !== 'admin') {
+      if (error || !profile || profile.admin !== 'admin') {
         alert("Sizda admin panelga kirish huquqi yo'q!");
         window.location.href = 'index.html';
         return false;
@@ -89,6 +88,7 @@
       return true;
     }
 
+    // 2. Fanlar ro'yxatini yuklash
     async function fanlarniYuklash() {
       const select = document.getElementById('fan-select');
       const { data: fanlar, error } = await _supabase.from('fanlar').select('id, nomi');
@@ -104,8 +104,10 @@
       });
     }
 
+    // 3. Fayl va material qo'shish jarayoni
     document.getElementById('add-material-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      
       const msg = document.getElementById('message');
       const submitBtn = document.getElementById('submit-btn');
       
@@ -113,32 +115,36 @@
       msg.innerText = "Fayl serverga yuklanmoqda...";
       submitBtn.disabled = true;
 
-      const fan_id = document.getElementById('fan-select').value;
-      const sarlavha = document.getElementById('sarlavha').value;
-      const mavzu = document.getElementById('mavzu').value;
-      const tavsif = document.getElementById('tavsif').value;
-      const fileInput = document.getElementById('file-input');
-
-      const file = fileInput.files[0];
-      if (!file) {
-        msg.style.color = 'red';
-        msg.innerText = "Iltimos, fayl tanlang!";
-        submitBtn.disabled = false;
-        return;
-      }
-
-      const fileName = `${Date.now()}_${file.name}`;
-
       try {
-        // 📁 Storage'ga fayl yuklash
+        const fan_id = document.getElementById('fan-select').value;
+        const sarlavha = document.getElementById('sarlavha').value;
+        const mavzu = document.getElementById('mavzu').value;
+        const tavsif = document.getElementById('tavsif').value;
+        const fileInput = document.getElementById('file-input');
+
+        const file = fileInput.files[0];
+        if (!file) {
+          alert("Iltimos, fayl tanlang!");
+          submitBtn.disabled = false;
+          return;
+        }
+
+        // Fayl nomidagi kirill va simvollarni xavfsiz o'tkazish
+        const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const fileName = `${Date.now()}_${cleanFileName}`;
+
+        // Storage'ga fayl yuklash
         const { data: storageData, error: storageError } = await _supabase
           .storage
           .from('materiallar')
-          .upload(fileName, file);
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
         if (storageError) throw storageError;
 
-        // 🔗 Fayl URL manzilini olish
+        // Public URL manzilini olish
         const { data: publicUrlData } = _supabase
           .storage
           .from('materiallar')
@@ -146,10 +152,18 @@
 
         const fileUrl = publicUrlData.publicUrl;
 
-        // 💾 Bazaga saqlash
-        const { error: dbError } = await _supabase.from('materials').insert([
-          { fan_id, sarlavha, mavzu, tavsif, url: fileUrl }
-        ]);
+        // Bazaga saqlash ('materials' jadvaliga)
+        const { error: dbError } = await _supabase
+          .from('materials')
+          .insert([
+            { 
+              fan_id: parseInt(fan_id), 
+              sarlavha: sarlavha, 
+              mavzu: mavzu, 
+              tavsif: tavsif, 
+              url: fileUrl 
+            }
+          ]);
 
         if (dbError) throw dbError;
 
@@ -158,15 +172,15 @@
         document.getElementById('add-material-form').reset();
 
       } catch (err) {
-        console.error(err);
+        console.error("Xatolik:", err);
         msg.style.color = 'red';
-        msg.innerText = "Xatolik yuz berdi: " + err.message;
+        msg.innerText = "Xatolik yuz berdi: " + (err.message || "Serverga ulanib bo'lmadi");
       } finally {
         submitBtn.disabled = false;
       }
     });
 
-    // Sahifa yuklanishi bilan tekshirish va fanlarni olib kelish
+    // Sahifa yuklanishida ishlaydi
     async function init() {
       const isAdmin = await checkAdmin();
       if (isAdmin) {
