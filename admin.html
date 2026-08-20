@@ -115,7 +115,7 @@
       const listContainer = document.getElementById('materials-list');
       const { data: materials, error } = await _supabase
         .from('materials')
-        .select('*, fanlar(nomi)')
+        .select('*')
         .order('id', { ascending: false });
 
       if (error) {
@@ -133,22 +133,35 @@
         listContainer.innerHTML += `
           <div class="material-item" id="item-${item.id}">
             <div class="material-info">
-              <h4>${item.sarlavha} (${item.fanlar?.nomi || 'Fan korsatilmagan'})</h4>
+              <h4>${item.sarlavha}</h4>
               <p><b>Mavzu:</b> ${item.mavzu}</p>
             </div>
             <div>
               <button class="btn-edit" onclick="tahrirlash(${item.id}, '${item.sarlavha}', '${item.mavzu}')">✏️ Edit</button>
-              <button class="btn-delete" onclick="ochirish(${item.id})">🗑 Delete</button>
+              <button class="btn-delete" onclick="ochirish(${item.id}, '${item.url}')">🗑 Delete</button>
             </div>
           </div>
         `;
       });
     }
 
-    // 4. O'chirish funksiyasi
-    async function ochirish(id) {
-      if (!confirm("Haqiqatdan ham ushbu materialni o'chirmoqchimisiz?")) return;
+    // 4. O'chirish funksiyasi (Bazadan ham, Storage'dagi faylni ham o'chiradi)
+    async function ochirish(id, fileUrl) {
+      if (!confirm("Haqiqatdan ham ushbu materialni va uning faylini o'chirmoqchimisiz?")) return;
 
+      // Fayl nomini URL manzilidan ajratib olish
+      if (fileUrl) {
+        const urlParts = fileUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1];
+
+        if (fileName) {
+          await _supabase.storage
+            .from('materiallar')
+            .remove([fileName]);
+        }
+      }
+
+      // Bazadan o'chirish
       const { error } = await _supabase
         .from('materials')
         .delete()
@@ -157,7 +170,7 @@
       if (error) {
         alert("O'chirishda xatolik yuz berdi: " + error.message);
       } else {
-        alert("Material o'chirildi!");
+        alert("Material va uning fayli muvaffaqiyatli o'chirildi! 🗑");
         materiallarniYuklash(); // Ro'yxatni yangilash
       }
     }
@@ -218,7 +231,7 @@
         msg.style.color = 'green';
         msg.innerText = "Material saqlandi! 🎉";
         document.getElementById('add-material-form').reset();
-        materiallarniYuklash(); // Yangi saqlangach ro'yxatni yangilash
+        materiallarniYuklash();
 
       } catch (err) {
         msg.style.color = 'red';
