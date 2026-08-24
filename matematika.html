@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -19,12 +19,14 @@
         .submit-btn { background: #2ecc71; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; display: block; width: 100%; margin-top: 20px; font-weight: bold; }
         .submit-btn:hover { background: #27ae60; }
         .loading, .no-data { text-align: center; font-size: 16px; color: #666; padding: 20px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #3498db; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Matematika Akademiyasi</h1>
+    <a href="index.html" class="back-link">← Bosh sahifaga qaytish</a>
+    <h1>Matematika Bo'limi</h1>
     
     <!-- Bo'limlar menyusi -->
     <div class="categories">
@@ -40,14 +42,12 @@
 </div>
 
 <script>
-    // --- SUPABASE ULANISHI (Sizning kalitlaringiz bilan) ---
-    // Eslatma: Frontend qismida asosan publishable (anon) kalit ishlatiladi.
-    const SUPABASE_URL = 'https://hrdwtgy6lztrgagw2ajxnq.supabase.co'; // Loyihangiz URL manzili (agar o'zgargan bo'lsa tekshiring)
+    // Supabase ulanishi
+    const SUPABASE_URL = 'https://hrdwtgy6lztrgagw2ajxnq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_HRDwTGY6lzTrgagW2ajXnQ_tluf2SSQ';
     
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Bo'limlar bo'yicha testlarni bazadan olish
     async function loadTests(category, btnElement) {
         document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
         if(btnElement) btnElement.classList.add('active');
