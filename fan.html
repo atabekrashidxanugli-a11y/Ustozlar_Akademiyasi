@@ -50,27 +50,22 @@
       letter-spacing: -0.5px;
     }
 
-    .material-card { 
+    /* Test bo'limlari tugmalari dizayni */
+    .categories { display: flex; justify-content: space-around; margin: 20px 0; gap: 10px; flex-wrap: wrap; }
+    .cat-btn { padding: 12px 20px; background: #3498db; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; flex: 1; min-width: 150px; transition: 0.3s; font-weight: 600; }
+    .cat-btn:hover { background: #2980b9; }
+    .cat-btn.active { background: #1d4ed8; }
+
+    .material-card, .test-card { 
       background: #ffffff; 
       border: 1px solid #e2e8f0; 
       border-radius: 16px; 
       padding: 24px; 
       margin-bottom: 25px; 
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .material-card:hover {
-      box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08);
-      border-color: #cbd5e1;
-    }
-
-    .material-card h3 { 
-      margin: 0 0 10px 0; 
-      color: #1d4ed8; 
-      font-size: 20px; 
-      font-weight: 600; 
-    }
-    .material-card p { margin: 6px 0; color: #475569; font-size: 15px; }
+    .material-card h3, .test-card h3 { margin: 0 0 10px 0; color: #1d4ed8; font-size: 20px; font-weight: 600; }
+    .material-card p, .test-card p { margin: 6px 0; color: #475569; font-size: 15px; }
 
     .file-preview { 
       width: 100%; 
@@ -81,62 +76,37 @@
       background: #f8fafc; 
     }
 
-    /* PREMIUM TUGMALAR DİZAYNI */
     .btn-group { display: flex; gap: 14px; margin-top: 20px; flex-wrap: wrap; }
 
     .btn-subscribe { 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 24px; 
-      background: linear-gradient(135deg, #0088cc 0%, #006699 100%); 
-      color: white; 
-      border-radius: 12px; 
-      text-decoration: none; 
-      font-size: 15px; 
-      font-weight: 600; 
-      box-shadow: 0 4px 14px rgba(0, 136, 204, 0.35);
-      transition: all 0.25s ease;
-      border: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 24px; background: linear-gradient(135deg, #0088cc 0%, #006699 100%); 
+      color: white; border-radius: 12px; text-decoration: none; font-size: 15px; font-weight: 600; 
+      box-shadow: 0 4px 14px rgba(0, 136, 204, 0.35); border: none; cursor: pointer;
     }
-    .btn-subscribe:hover { 
-      background: linear-gradient(135deg, #0099ee 0%, #0077bb 100%); 
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 136, 204, 0.45);
-    }
-
     .btn-check { 
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 24px; 
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-      color: white; 
-      border-radius: 12px; 
-      border: none; 
-      font-size: 15px; 
-      font-weight: 600; 
-      cursor: pointer; 
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+      color: white; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; 
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-      transition: all 0.25s ease;
     }
-    .btn-check:hover { 
-      background: linear-gradient(135deg, #34d399 0%, #10b981 100%); 
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
-    }
-
-    .btn-subscribe:active, .btn-check:active {
-      transform: translateY(0);
-    }
+    .submit-btn { background: #2563eb; color: white; padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; display: block; width: 100%; margin-top: 20px; font-weight: bold; }
   </style>
 </head>
 <body>
   <div class="container">
     <a href="index.html" class="btn-back">← Bosh sahifaga qaytish</a>
     <h1 id="fan-nomi">Fan materiallari</h1>
+    
+    <!-- Matematika uchun maxsus test bo'limlari menyusi (Faqat matematika ochilganda ko'rinadi) -->
+    <div id="math-categories" style="display: none;">
+      <div class="categories">
+        <button class="cat-btn active" onclick="loadMathTests('darslik', this)">Darsliklar bo'yicha testlar</button>
+        <button class="cat-btn" onclick="loadMathTests('abituryent', this)">Abituryent bo'limi</button>
+        <button class="cat-btn" onclick="loadMathTests('attestatsiya', this)">Attestatsiya bo'limi</button>
+      </div>
+    </div>
+
     <div id="materials-container">Yuklanmoqda...</div>
   </div>
 
@@ -147,21 +117,16 @@
     const urlParams = new URLSearchParams(window.location.search);
     const fanId = urlParams.get('id') || 1;
 
+    let isMatematika = false;
+
     function openFileWithCheck(fileUrl) {
-      if (!fileUrl) {
-        alert("Fayl havolasi topilmadi!");
-        return;
-      }
-      
+      if (!fileUrl) { alert("Fayl havolasi topilmadi!"); return; }
       let isSubscribed = confirm("Kanalimizga obuna bo'ldingizmi?\n\n'OK' tugmasini bosing va to'liq fayl ochiladi.");
-      if (isSubscribed) {
-        window.open(fileUrl, '_blank');
-      } else {
-        window.open(CHANNEL_URL, '_blank');
-      }
+      if (isSubscribed) { window.open(fileUrl, '_blank'); } 
+      else { window.open(CHANNEL_URL, '_blank'); }
     }
 
-    async function loadMaterials() {
+    async function loadFanData() {
       const container = document.getElementById('materials-container');
 
       try {
@@ -172,43 +137,19 @@
           .maybeSingle();
 
         if (fan) {
-          document.getElementById('fan-nomi').innerText = fan.nomi + " fanidan materiallar";
+          document.getElementById('fan-nomi').innerText = fan.nomi + " materiallari va testlari";
+          
+          // Agar fan nomi Matematika bo'lsa, test bo'limlarini ochamiz
+          if (fan.nomi.toLowerCase().includes('matematika')) {
+            isMatematika = true;
+            document.getElementById('math-categories').style.display = 'block';
+            loadMathTests('darslik');
+            return;
+          }
         }
 
-        const { data: materials, error: matError } = await _supabase
-          .from('materials')
-          .select('*')
-          .eq('fan_id', fanId);
-
-        if (matError) throw matError;
-
-        if (materials && materials.length > 0) {
-          container.innerHTML = '';
-          materials.forEach(item => {
-            let previewHtml = '';
-            if (item.url) {
-              previewHtml = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(item.url)}&embedded=true" class="file-preview"></iframe>`;
-            }
-
-            container.innerHTML += `
-              <div class="material-card">
-                <h3>${item.sarlavha || 'Material'}</h3>
-                <p><strong>Mavzu:</strong> ${item.mavzu || '-'}</p>
-                ${item.tavsif ? `<p>${item.tavsif}</p>` : ''}
-                ${previewHtml}
-                
-                ${item.url ? `
-                  <div class="btn-group">
-                    <a href="${CHANNEL_URL}" target="_blank" class="btn-subscribe">📢 Kanalga obuna bo'lish</a>
-                    <button onclick="openFileWithCheck('${item.url}')" class="btn-check">✅ Obunani tekshirish / Faylni ko'rish</button>
-                  </div>
-                ` : ''}
-              </div>
-            `;
-          });
-        } else {
-          container.innerHTML = '<p>Ushbu fan uchun hozircha materiallar mavjud emas.</p>';
-        }
+        // Boshqa fanlar uchun oddiy materiallarni yuklash
+        loadRegularMaterials();
 
       } catch (err) {
         console.error("Xatolik yuz berdi:", err.message);
@@ -216,7 +157,96 @@
       }
     }
 
-    loadMaterials();
+    async function loadRegularMaterials() {
+      const container = document.getElementById('materials-container');
+      const { data: materials, error } = await _supabase
+        .from('materials')
+        .select('*')
+        .eq('fan_id', fanId);
+
+      if (error) throw error;
+
+      if (materials && materials.length > 0) {
+        container.innerHTML = '';
+        materials.forEach(item => {
+          let previewHtml = item.url ? `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(item.url)}&embedded=true" class="file-preview"></iframe>` : '';
+          container.innerHTML += `
+            <div class="material-card">
+              <h3>${item.sarlavha || 'Material'}</h3>
+              <p><strong>Mavzu:</strong> ${item.mavzu || '-'}</p>
+              ${item.tavsif ? `<p>${item.tavsif}</p>` : ''}
+              ${previewHtml}
+              ${item.url ? `
+                <div class="btn-group">
+                  <a href="${CHANNEL_URL}" target="_blank" class="btn-subscribe">📢 Kanalga obuna bo'lish</a>
+                  <button onclick="openFileWithCheck('${item.url}')" class="btn-check">✅ Faylni ko'rish</button>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+      } else {
+        container.innerHTML = '<p>Ushbu fan uchun hozircha materiallar mavjud emas.</p>';
+      }
+    }
+
+    // Matematika uchun Supabase'dan testlarni tortish funksiyasi
+    async function loadMathTests(category, btnElement) {
+      if (btnElement) {
+        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+      }
+
+      const container = document.getElementById('materials-container');
+      container.innerHTML = `<p style="text-align: center;">Testlar yuklanmoqda...</p>`;
+
+      try {
+        const { data: tests, error } = await _supabase
+          .from('math_tests')
+          .select(`id, title, math_questions ( id, question_text, option_a, option_b, option_c, option_d, correct_answer )`)
+          .eq('category', category);
+
+        if (error) throw error;
+
+        if (!tests || tests.length === 0) {
+          container.innerHTML = `<p style="text-align: center; color: #666; padding: 20px;">Hozircha bu bo'limda testlar mavjud emas.</p>`;
+          return;
+        }
+
+        let htmlContent = ``;
+        tests.forEach((test, tIndex) => {
+          htmlContent += `<div class="test-card"><h3>${tIndex + 1}. ${test.title}</h3>`;
+          
+          if (test.math_questions && test.math_questions.length > 0) {
+            test.math_questions.forEach((q, qIndex) => {
+              htmlContent += `
+                <div style="margin-bottom: 15px;">
+                  <p><b>${qIndex + 1}) ${q.question_text}</b></p>
+                  <div style="margin-left: 15px;">
+                    <label style="display:block; margin:6px 0; cursor:pointer;"><input type="radio" name="q_${q.id}" value="A"> A) ${q.option_a}</label>
+                    <label style="display:block; margin:6px 0; cursor:pointer;"><input type="radio" name="q_${q.id}" value="B"> B) ${q.option_b}</label>
+                    <label style="display:block; margin:6px 0; cursor:pointer;"><input type="radio" name="q_${q.id}" value="C"> C) ${q.option_c}</label>
+                    <label style="display:block; margin:6px 0; cursor:pointer;"><input type="radio" name="q_${q.id}" value="D"> D) ${q.option_d}</label>
+                  </div>
+                </div>
+              `;
+            });
+          } else {
+            htmlContent += `<p>Bu testda hozircha savollar yo'q.</p>`;
+          }
+          htmlContent += `</div>`;
+        });
+
+        htmlContent += `<button class="submit-btn" onclick="alert('Natijalaringiz qabul qilindi!')">Natijalarni tekshirish</button>`;
+        container.innerHTML = htmlContent;
+
+      } catch (err) {
+        console.error('Xatolik:', err);
+        container.innerHTML = `<p style="color: red; text-align: center;">Testlarni yuklashda xatolik yuz berdi.</p>`;
+      }
+    }
+
+    loadFanData();
   </script>
 </body>
 </html>
