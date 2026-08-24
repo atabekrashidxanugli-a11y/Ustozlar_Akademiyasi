@@ -1,114 +1,114 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <!-- Google Search Console tasdiqlash kodi -->
-  <meta name="google-site-verification" content="x9p_ed5mHePclnauBpEhc7ratYDpufRguCYjB0ikR6s" />
-  
-  <title>Ustozlar Akademiyasi</title>
-  <style>
-    body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#182230}
-    header{background:linear-gradient(135deg,#2447c8,#7546d8);color:#fff;padding:18px 6%}
-    nav{display:flex;justify-content:space-between;align-items:center}
-    .logo{font-weight:800;font-size:24px}
-    a{color:inherit;text-decoration:none}
-    .hero{text-align:center;padding:70px 6%;background:linear-gradient(135deg,#eef2ff,#fff)}
-    .hero h1{font-size:42px;color:#213b91}
-    .hero p{max-width:760px;margin:auto;color:#596579;font-size:18px}
-    .btn{display:inline-block;margin-top:22px;padding:12px 22px;border-radius:10px;background:#3157d5;color:#fff;font-weight:bold}
-    .wrap{max-width:1200px;margin:auto;padding:45px 6%}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
-    
-    /* Card dizayni va bosilish effekti */
-    .card-link {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
-    .card{
-      background:#fff;
-      padding:22px;
-      border-radius:16px;
-      box-shadow:0 7px 22px #1e325010;
-      display:flex;
-      align-items:center;
-      gap:12px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      cursor: pointer;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(30, 50, 80, 0.15);
-    }
-    .card h3{margin:0}
-    .icon{font-size:28px}
-    footer{background:#182230;color:#dbe2ef;text-align:center;padding:30px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ustozlar Akademiyasi - Matematika Bo'limi</title>
+    <!-- Supabase kutubxonasi -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        .categories { display: flex; justify-content: space-around; margin: 20px 0; gap: 10px; flex-wrap: wrap; }
+        .cat-btn { padding: 12px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 15px; flex: 1; min-width: 150px; transition: 0.3s; }
+        .cat-btn:hover { background: #2980b9; }
+        .cat-btn.active { background: #2c3e50; }
+        .test-card { background: #fafafa; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        .options label { display: block; margin: 10px 0; cursor: pointer; font-size: 16px; }
+        .submit-btn { background: #2ecc71; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; display: block; width: 100%; margin-top: 20px; font-weight: bold; }
+        .submit-btn:hover { background: #27ae60; }
+        .loading, .no-data { text-align: center; font-size: 16px; color: #666; padding: 20px; }
+    </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <div class="logo">📚 Ustozlar Akademiyasi</div>
-    </nav>
-  </header>
 
-  <section class="hero">
-    <h1>Barcha fanlar — yagona ta’lim platformasida</h1>
-    <p>O‘qituvchilar, tarbiyachilar va o‘quvchilar uchun dars materiallari, testlar, taqdimotlar, UMK, videolar va AI vositalari.</p>
-    <a class="btn" href="#fanlar">Fanlarni ko‘rish</a>
-  </section>
-
-  <section class="wrap" id="fanlar">
-    <h2>Fanlar</h2>
-    <div class="grid" id="fanlar-container">
-      <p>Fanlar yuklanmoqda...</p>
+<div class="container">
+    <h1>Ustozlar Akademiyasi - Matematika</h1>
+    
+    <!-- Bo'limlar menyusi -->
+    <div class="categories">
+        <button class="cat-btn active" onclick="loadTests('darslik', this)">Darsliklar bo'yicha testlar</button>
+        <button class="cat-btn" onclick="loadTests('abituryent', this)">Abituryent bo'limi</button>
+        <button class="cat-btn" onclick="loadTests('attestatsiya', this)">Attestatsiya bo'limi</button>
     </div>
-  </section>
 
-  <footer>© 2026 Ustozlar Akademiyasi</footer>
+    <!-- Testlar chiqadigan qism -->
+    <div id="test-container">
+        <div class="loading">Yuklanmoqda...</div>
+    </div>
+</div>
 
-  <!-- Supabase JS kutubxonasi -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Kalitlar saqlangan config fayli -->
-  <script src="config.js"></script>
-
-  <script>
-    // 1. Supabase mijozini yaratish
+<script>
+    // Supabase ulanishi
+    const SUPABASE_URL = 'https://hrdwtgy6lztrgagw2ajxnq.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_HRDwTGY6lzTrgagW2ajXnQ_tluf2SSQ';
+    
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 2. Fanlarni bazadan olish va ekranga chiqarish
-    async function fanlarniYuklash() {
-      const container = document.getElementById('fanlar-container');
-      
-      const { data, error } = await _supabase.from('fanlar').select('*');
+    async function loadTests(category, btnElement) {
+        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+        if(btnElement) btnElement.classList.add('active');
 
-      if (error) {
-        console.error('Xatolik yuz berdi:', error.message);
-        container.innerHTML = '<p style="color:red">Fanlarni yuklashda xatolik yuz berdi!</p>';
-        return;
-      }
+        const container = document.getElementById('test-container');
+        container.innerHTML = `<div class="loading">Ma'lumotlar yuklanmoqda...</div>`;
 
-      // Bazadagi ma'lumotlarni ekranga chiqarish
-      if (data && data.length > 0) {
-        container.innerHTML = '';
-        data.forEach(fan => {
-          container.innerHTML += `
-            <a href="fan.html?id=${fan.id}" class="card-link">
-              <div class="card">
-                <span class="icon">${fan.belgi || '📚'}</span>
-                <h3>${fan.nomi}</h3>
-              </div>
-            </a>
-          `;
-        });
-      } else {
-        container.innerHTML = '<p>Hozircha hech qanday fan topilmadi.</p>';
-      }
+        try {
+            const { data: tests, error } = await _supabase
+                .from('math_tests')
+                .select(`id, title, math_questions ( id, question_text, option_a, option_b, option_c, option_d, correct_answer )`)
+                .eq('category', category);
+
+            if (error) throw error;
+
+            if (!tests || tests.length === 0) {
+                container.innerHTML = `<div class="no-data">Hozircha bu bo'limda testlar mavjud emas.</div>`;
+                return;
+            }
+
+            let htmlContent = `<h2>${category.toUpperCase()} bo'limi testlari</h2>`;
+            
+            tests.forEach((test, tIndex) => {
+                htmlContent += `<div class="test-card"><h3>${tIndex + 1}. ${test.title}</h3>`;
+                
+                if (test.math_questions && test.math_questions.length > 0) {
+                    test.math_questions.forEach((q, qIndex) => {
+                        htmlContent += `
+                            <div style="margin-bottom: 15px;">
+                                <p><b>${qIndex + 1}) ${q.question_text}</b></p>
+                                <div class="options">
+                                    <label><input type="radio" name="q_${q.id}" value="A"> A) ${q.option_a}</label>
+                                    <label><input type="radio" name="q_${q.id}" value="B"> B) ${q.option_b}</label>
+                                    <label><input type="radio" name="q_${q.id}" value="C"> C) ${q.option_c}</label>
+                                    <label><input type="radio" name="q_${q.id}" value="D"> D) ${q.option_d}</label>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    htmlContent += `<p>Bu testda hozircha savollar yo'q.</p>`;
+                }
+                htmlContent += `</div>`;
+            });
+
+            htmlContent += `<button class="submit-btn" onclick="checkResults()">Natijalarni tekshirish</button>`;
+            container.innerHTML = htmlContent;
+
+        } catch (err) {
+            console.error('Xatolik:', err);
+            container.innerHTML = `<div class="no-data" style="color: red;">Ma'lumotlarni yuklashda xatolik yuz berdi.</div>`;
+        }
     }
 
-    // Sahifa yuklanganda funksiyani ishga tushirish
-    fanlarniYuklash();
-  </script>
+    function checkResults() {
+        alert("Javoblaringiz qabul qilindi!");
+    }
+
+    window.onload = () => {
+        const firstBtn = document.querySelector('.cat-btn');
+        loadTests('darslik', firstBtn);
+    };
+</script>
+
 </body>
 </html>
