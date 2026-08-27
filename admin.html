@@ -136,7 +136,6 @@
       transition: 0.2s;
       margin-top: 10px;
     }
-
     .btn-submit:hover { background: #1d4ed8; }
 
     .test-item {
@@ -180,21 +179,37 @@
     <div class="card">
       <h2>Yangi material va fayl yuklash</h2>
       <form id="material-form">
-        <div class="form-group">
-          <label>Fanni tanlang:</label>
-          <select id="mat-fan-id" required>
-            <option value="">-- Fanni tanlang --</option>
-          </select>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Fanni tanlang:</label>
+            <select id="mat-fan-id" required>
+              <option value="">-- Fanni tanlang --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Sinfni tanlang:</label>
+            <select id="mat-grade">
+              <option value="">Umumiy (Sinf belgilanmagan)</option>
+              <option value="5">5-sinf</option>
+              <option value="6">6-sinf</option>
+              <option value="7">7-sinf</option>
+              <option value="8">8-sinf</option>
+              <option value="9">9-sinf</option>
+              <option value="10">10-sinf</option>
+              <option value="11">11-sinf</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-group">
           <label>Sarlavha:</label>
-          <input type="text" id="mat-sarlavha" placeholder="Masalan: 6-sinf Fizika darslik" required>
+          <input type="text" id="mat-sarlavha" placeholder="Masalan: 6-sinf Matematika darslik" required>
         </div>
 
         <div class="form-group">
           <label>Mavzu:</label>
-          <input type="text" id="mat-mavzu" placeholder="Masalan: Zichlik va massa">
+          <input type="text" id="mat-mavzu" placeholder="Masalan: Oddiy kasrlar">
         </div>
 
         <div class="form-group">
@@ -221,7 +236,7 @@
       <form id="test-create-form">
         <div class="form-group">
           <label>Test mavzusi (Sarlavha):</label>
-          <input type="text" id="test-title" placeholder="Masalan: 1-Bob. Natural sonlar ustida amallar" required>
+          <input type="text" id="test-title" placeholder="Masalan: 1-Bob. Natural sonlar" required>
         </div>
 
         <div class="grid-2">
@@ -313,7 +328,6 @@
 <script>
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Tablarni almashtirish
   function switchAdminTab(tabName) {
     if (tabName === 'material') {
       document.getElementById('section-material').style.display = 'block';
@@ -334,7 +348,6 @@
     document.getElementById('grade-wrapper').style.display = (cat === 'darslik') ? 'block' : 'none';
   }
 
-  // Fanlar ro'yxatini yuklash
   async function loadFanlar() {
     const fanSelect = document.getElementById('mat-fan-id');
     try {
@@ -348,7 +361,7 @@
     }
   }
 
-  // Fayl yuklash (Materials)
+  // Fayl yuklash (Sinf qo'shilgan holatda)
   document.getElementById('material-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('btn-mat-submit');
@@ -357,14 +370,16 @@
 
     try {
       const fan_id = document.getElementById('mat-fan-id').value;
+      const gradeVal = document.getElementById('mat-grade').value;
+      const grade = gradeVal ? parseInt(gradeVal) : null;
       const sarlavha = document.getElementById('mat-sarlavha').value;
+      const mavzu = document.getElementById('mat-mavzu').value;
       const tavsif = document.getElementById('mat-tavsif').value;
       const fileInput = document.getElementById('mat-file');
       const file = fileInput.files[0];
 
       if (!file) throw new Error("Fayl tanlanmadi!");
 
-      // 1. Storage ga yuklash
       const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
       const { data: uploadData, error: uploadError } = await _supabase.storage
         .from('materials')
@@ -375,10 +390,11 @@
       const { data: publicUrlData } = _supabase.storage.from('materials').getPublicUrl(fileName);
       const fileUrl = publicUrlData.publicUrl;
 
-      // 2. Bazaga yozish
       const { error: dbError } = await _supabase.from('materials').insert([{
         fan_id: parseInt(fan_id),
+        grade: grade,
         sarlavha: sarlavha,
+        mavzu: mavzu,
         tavsif: tavsif,
         url: fileUrl
       }]);
@@ -396,7 +412,6 @@
     }
   });
 
-  // Testlarni yuklash
   async function loadTestsData() {
     const listDiv = document.getElementById('tests-list-box');
     const selectBox = document.getElementById('target-test-select');
@@ -430,7 +445,6 @@
     }
   }
 
-  // Yangi test yaratish
   document.getElementById('test-create-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('test-title').value;
@@ -450,7 +464,6 @@
     }
   });
 
-  // Savol qo'shish
   document.getElementById('question-create-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const test_id = document.getElementById('target-test-select').value;
@@ -490,7 +503,6 @@
     }
   });
 
-  // Test o'chirish
   async function deleteTest(id) {
     if (!confirm("Test va uning barcha savollarini o'chirishni tasdiqlaysizmi?")) return;
     try {
