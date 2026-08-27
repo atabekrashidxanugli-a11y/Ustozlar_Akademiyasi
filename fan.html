@@ -36,17 +36,17 @@
 
     h1 { color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 16px; font-size: 26px; }
 
-    /* Asosiy bo'limlar */
+    /* Asosiy bo'lim tugmalari */
     .categories { display: flex; justify-content: space-around; margin: 20px 0 10px 0; gap: 8px; flex-wrap: wrap; }
     .cat-btn { padding: 12px 18px; background: #3498db; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; flex: 1; min-width: 130px; transition: 0.3s; }
     .cat-btn:hover { background: #2980b9; }
     .cat-btn.active { background: #1d4ed8; }
 
-    /* Sinflar paneli */
-    .grades-container { display: flex; gap: 8px; margin: 15px 0 25px 0; overflow-x: auto; padding-bottom: 5px; }
-    .grade-btn { padding: 8px 16px; background: #e2e8f0; color: #334155; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; transition: 0.2s; }
-    .grade-btn:hover { background: #cbd5e1; }
-    .grade-btn.active { background: #0f172a; color: white; }
+    /* Kichik filtrlar (Sinflar va Abituriyent mavzulari) */
+    .sub-menu { display: flex; gap: 8px; margin: 15px 0 25px 0; overflow-x: auto; padding-bottom: 5px; flex-wrap: wrap; }
+    .sub-btn { padding: 8px 14px; background: #e2e8f0; color: #334155; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; transition: 0.2s; }
+    .sub-btn:hover { background: #cbd5e1; }
+    .sub-btn.active { background: #0f172a; color: white; }
 
     .test-card, .material-card { 
       background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; 
@@ -70,15 +70,26 @@
         <button id="btn-attestatsiya" class="cat-btn" onclick="switchCategory('attestatsiya', this)">Attestatsiya bo'limi</button>
       </div>
 
-      <!-- Faqat darslik tanlanganda ochiladi -->
-      <div id="grades-menu" class="grades-container">
-        <button class="grade-btn active" onclick="selectGrade(5, this)">5-sinf</button>
-        <button class="grade-btn" onclick="selectGrade(6, this)">6-sinf</button>
-        <button class="grade-btn" onclick="selectGrade(7, this)">7-sinf</button>
-        <button class="grade-btn" onclick="selectGrade(8, this)">8-sinf</button>
-        <button class="grade-btn" onclick="selectGrade(9, this)">9-sinf</button>
-        <button class="grade-btn" onclick="selectGrade(10, this)">10-sinf</button>
-        <button class="grade-btn" onclick="selectGrade(11, this)">11-sinf</button>
+      <!-- Darsliklar uchun sinflar menyusi -->
+      <div id="grades-menu" class="sub-menu">
+        <button class="sub-btn active" onclick="selectSubFilter('grade', 5, this)">5-sinf</button>
+        <button class="sub-btn" onclick="selectSubFilter('grade', 6, this)">6-sinf</button>
+        <button class="sub-btn" onclick="selectSubFilter('grade', 7, this)">7-sinf</button>
+        <button class="sub-btn" onclick="selectSubFilter('grade', 8, this)">8-sinf</button>
+        <button class="sub-btn" onclick="selectSubFilter('grade', 9, this)">9-sinf</button>
+        <button class="sub-btn" onclick="selectSubFilter('grade', 10, this)">10-sinf</button>
+        <button class="sub-btn" onclick="selectSubFilter('grade', 11, this)">11-sinf</button>
+      </div>
+
+      <!-- Abituryent uchun yo'nalishlar menyusi -->
+      <div id="abituryent-menu" class="sub-menu" style="display: none;">
+        <button class="sub-btn active" onclick="selectSubFilter('topic', 'all', this)">Barcha mavzular</button>
+        <button class="sub-btn" onclick="selectSubFilter('topic', 'algebra', this)">Algebra va sonlar</button>
+        <button class="sub-btn" onclick="selectSubFilter('topic', 'geometriya', this)">Geometriya (Planimetriya / Stereometriya)</button>
+        <button class="sub-btn" onclick="selectSubFilter('topic', 'funksiya', this)">Funksiyalar va grafiklar</button>
+        <button class="sub-btn" onclick="selectSubFilter('topic', 'trigonometriya', this)">Trigonometriya</button>
+        <button class="sub-btn" onclick="selectSubFilter('topic', 'dtm_variant', this)">DTM Namunaviy variantlar</button>
+        <button class="sub-btn" onclick="selectSubFilter('topic', 'majburiy', this)">Majburiy fan bloki</button>
       </div>
     </div>
 
@@ -91,7 +102,7 @@
     const fanId = urlParams.get('id') || 1;
 
     let currentCategory = 'darslik';
-    let currentGrade = 5;
+    let currentFilterVal = 5; // Darslikda sinf (5), Abituryentda esa topic
 
     async function loadFanData() {
       const container = document.getElementById('materials-container');
@@ -107,8 +118,7 @@
         if (fan && fan.nomi.toLowerCase().includes('matematika')) {
           document.getElementById('fan-nomi').innerText = fan.nomi + " materiallari va testlari";
           document.getElementById('math-categories').style.display = 'block';
-          document.getElementById('grades-menu').style.display = 'flex';
-          loadMathTests('darslik', 5);
+          switchCategory('darslik');
         } else {
           if (fan) document.getElementById('fan-nomi').innerText = fan.nomi + " materiallari";
           loadRegularMaterials();
@@ -120,38 +130,65 @@
     }
 
     function switchCategory(category, btnElement) {
-      document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-      if (btnElement) btnElement.classList.add('active');
+      if (btnElement) {
+        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+      }
       
       currentCategory = category;
       const gradesMenu = document.getElementById('grades-menu');
+      const abituryentMenu = document.getElementById('abituryent-menu');
 
       if (category === 'darslik') {
         gradesMenu.style.display = 'flex';
-        loadMathTests('darslik', currentGrade);
+        abituryentMenu.style.display = 'none';
+        currentFilterVal = 5;
+        resetActiveSubButtons(gradesMenu);
+        loadMathTests('darslik', { grade: 5 });
+      } else if (category === 'abituryent') {
+        gradesMenu.style.display = 'none';
+        abituryentMenu.style.display = 'flex';
+        currentFilterVal = 'all';
+        resetActiveSubButtons(abituryentMenu);
+        loadMathTests('abituryent', { topic: 'all' });
       } else {
         gradesMenu.style.display = 'none';
-        loadMathTests(category, null);
+        abituryentMenu.style.display = 'none';
+        loadMathTests('attestatsiya', {});
       }
     }
 
-    function selectGrade(grade, btnElement) {
-      document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('active'));
-      if (btnElement) btnElement.classList.add('active');
-      
-      currentGrade = grade;
-      loadMathTests('darslik', grade);
+    function resetActiveSubButtons(menuContainer) {
+      menuContainer.querySelectorAll('.sub-btn').forEach((btn, index) => {
+        if (index === 0) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
     }
 
-    async function loadMathTests(category, grade) {
+    function selectSubFilter(type, value, btnElement) {
+      const parent = btnElement.parentElement;
+      parent.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+      
+      currentFilterVal = value;
+      if (type === 'grade') {
+        loadMathTests('darslik', { grade: value });
+      } else if (type === 'topic') {
+        loadMathTests('abituryent', { topic: value });
+      }
+    }
+
+    async function loadMathTests(category, filterOptions) {
       const container = document.getElementById('materials-container');
       container.innerHTML = `<p style="text-align: center; color: #64748b;">Testlar yuklanmoqda...</p>`;
 
       try {
-        // 1. Testlarni olish
         let query = _supabase.from('math_tests').select('*').eq('category', category);
-        if (category === 'darslik' && grade) {
-          query = query.eq('grade', grade);
+
+        if (category === 'darslik' && filterOptions.grade) {
+          query = query.eq('grade', filterOptions.grade);
+        } else if (category === 'abituryent' && filterOptions.topic && filterOptions.topic !== 'all') {
+          query = query.eq('topic', filterOptions.topic);
         }
 
         const { data: tests, error: testError } = await query;
@@ -162,7 +199,6 @@
           return;
         }
 
-        // 2. Test savollarini olish
         const testIds = tests.map(t => t.id);
         const { data: questions, error: qError } = await _supabase
           .from('math_questions')
@@ -206,7 +242,7 @@
 
       } catch (err) {
         console.error("Xatolik tafsiloti:", err);
-        container.innerHTML = `<p style="color: red; text-align: center;">Testlarni yuklashda xatolik yuz berdi. (Konsolni tekshiring)</p>`;
+        container.innerHTML = `<p style="color: red; text-align: center;">Testlarni yuklashda xatolik yuz berdi.</p>`;
       }
     }
 
