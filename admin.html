@@ -18,29 +18,137 @@
       min-height: 100vh;
     }
 
-    .container { max-width: 850px; margin: 0 auto; }
-    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .btn-back { text-decoration: none; color: #64748b; font-weight: 600; font-size: 14px; }
     .btn-back:hover { color: #2563eb; }
-    .btn-logout { background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
+    .btn-logout { background: #ef4444; color: white; border: none; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
 
-    .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-    .tab-btn { flex: 1; padding: 12px; border: none; background: #e2e8f0; color: #334155; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 14px; transition: 0.2s; }
-    .tab-btn.active { background: #2563eb; color: white; }
+    /* Asosiy bo'lim tablari */
+    .section-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
 
-    .card { background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; margin-bottom: 25px; }
-    h2 { margin-top: 0; margin-bottom: 20px; font-size: 20px; color: #0f172a; }
+    .nav-btn {
+      padding: 14px 16px;
+      border: 2px solid transparent;
+      background: #ffffff;
+      color: #475569;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .nav-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .nav-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #1d4ed8;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #0f172a;
+      border-bottom: 2px solid #f8fafc;
+      padding-bottom: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
     .form-group { margin-bottom: 16px; }
     label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #334155; }
-    input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; font-family: inherit; }
-    input:focus, select:focus, textarea:focus { border-color: #2563eb; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      font-family: inherit;
+      background: #ffffff;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-    .btn-submit { background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; margin-top: 10px; }
+    .btn-submit {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.2s;
+      margin-top: 10px;
+    }
     .btn-submit:hover { background: #1d4ed8; }
 
-    .test-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; background: #f8fafc; }
-    .btn-del { background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+    .items-container {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background: #f8fafc;
+    }
+
+    .btn-del {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .btn-del:hover { background: #dc2626; }
   </style>
 </head>
 <body>
@@ -51,27 +159,33 @@
     <button class="btn-logout" onclick="logout()">Chiqish</button>
   </div>
 
-  <div class="admin-tabs">
-    <button id="tab-material" class="tab-btn active" onclick="switchAdminTab('material')">Fayl Yuklash</button>
-    <button id="tab-test" class="tab-btn" onclick="switchAdminTab('test')">Testlar Boshqaruvi</button>
+  <!-- Asosiy bo'limlar navigatsiyasi -->
+  <div class="section-nav">
+    <button class="nav-btn active" onclick="showSection('darslik', this)">📚 Darsliklar bo'yicha</button>
+    <button class="nav-btn" onclick="showSection('abituryent', this)">🎓 Abituryent bo'limi</button>
+    <button class="nav-btn" onclick="showSection('attestatsiya', this)">🎖 Attestatsiya bo'limi</button>
+    <button class="nav-btn" onclick="showSection('questions', this)">❓ Savol qo'shish</button>
   </div>
 
-  <!-- 1-TAB: FAYL YUKLASH -->
-  <div id="section-material">
+  <!-- 1. DARSLIKLAR BO'YICHA -->
+  <div id="sec-darslik" class="admin-panel-section">
     <div class="card">
-      <h2>Yangi material va fayl yuklash</h2>
-      <form id="material-form">
+      <div class="section-title">
+        <span>📚 Darsliklar: Fayl yuklash va test yaratish</span>
+        <span class="badge">Sinflar kesimida</span>
+      </div>
+
+      <!-- Fayl yuklash formasi -->
+      <form id="form-darslik-file" onsubmit="uploadDarslikFile(event)">
+        <h4 style="margin: 0 0 12px 0; color: #334155;">A) Darslik faylini (PDF/Docx) yuklash</h4>
         <div class="grid-2">
           <div class="form-group">
             <label>Fanni tanlang:</label>
-            <select id="mat-fan-id" required>
-              <option value="">-- Fanni tanlang --</option>
-            </select>
+            <select class="fanlar-select" id="darslik-file-fan" required></select>
           </div>
           <div class="form-group">
-            <label>Sinfni tanlang:</label>
-            <select id="mat-grade">
-              <option value="">Umumiy (Sinf belgilanmagan)</option>
+            <label>Sinf:</label>
+            <select id="darslik-file-grade" required>
               <option value="5">5-sinf</option>
               <option value="6">6-sinf</option>
               <option value="7">7-sinf</option>
@@ -84,101 +198,135 @@
         </div>
 
         <div class="form-group">
-          <label>Sarlavha:</label>
-          <input type="text" id="mat-sarlavha" placeholder="Masalan: Attestatsiya savollar to'plami" required>
+          <label>Material sarlavhasi:</label>
+          <input type="text" id="darslik-file-title" placeholder="Masalan: 5-sinf Matematika darslik 1-qism" required>
         </div>
-
         <div class="form-group">
-          <label>Mavzu:</label>
-          <input type="text" id="mat-mavzu" placeholder="Masalan: Oliy toifa uchun metodik qo'llanma">
+          <label>Mavzu (ixtiyoriy):</label>
+          <input type="text" id="darslik-file-topic" placeholder="Masalan: Natural sonlar">
         </div>
-
         <div class="form-group">
-          <label>Tavsif (qisqacha):</label>
-          <textarea id="mat-tavsif" rows="3" placeholder="Material haqida qo'shimcha ma'lumot..."></textarea>
+          <label>Faylni tanlang:</label>
+          <input type="file" id="darslik-file-input" required>
         </div>
-
-        <div class="form-group">
-          <label>Darslik faylini tanlang (PDF, Docx, PPTX):</label>
-          <input type="file" id="mat-file" required>
-        </div>
-
-        <button type="submit" id="btn-mat-submit" class="btn-submit">Faylni yuklash va saqlash ↗</button>
+        <button type="submit" class="btn-submit">Faylni yuklash ↗</button>
       </form>
+
+      <hr style="margin: 25px 0; border: none; border-top: 1px dashed #e2e8f0;">
+
+      <!-- Yangi darslik testi yaratish -->
+      <form id="form-darslik-test" onsubmit="createDarslikTest(event)">
+        <h4 style="margin: 0 0 12px 0; color: #334155;">B) Sinflar bo'yicha yangi test to'plami yaratish</h4>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Sinf:</label>
+            <select id="darslik-test-grade">
+              <option value="5">5-sinf</option>
+              <option value="6">6-sinf</option>
+              <option value="7">7-sinf</option>
+              <option value="8">8-sinf</option>
+              <option value="9">9-sinf</option>
+              <option value="10">10-sinf</option>
+              <option value="11">11-sinf</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Test mavzusi (Sarlavha):</label>
+            <input type="text" id="darslik-test-title" placeholder="Masalan: 5-sinf 1-bob yuzasidan test" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">+ Test to'plamini saqlash</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Darsliklar bo'limidagi mavjud testlar</h3>
+      <div id="list-darslik-tests" class="items-container">Yuklanmoqda...</div>
     </div>
   </div>
 
-  <!-- 2-TAB: TESTLAR BOSHQARUVI -->
-  <div id="section-test" style="display: none;">
+  <!-- 2. ABITURYENT BO'LIMI -->
+  <div id="sec-abituryent" class="admin-panel-section" style="display: none;">
     <div class="card">
-      <h2>1. Yangi Test Yaratish</h2>
-      <form id="test-create-form">
+      <div class="section-title">
+        <span>🎓 Abituryent bo'limi</span>
+        <span class="badge">DTM / Mavzulashtirilgan</span>
+      </div>
+
+      <form id="form-abit-test" onsubmit="createAbituryentTest(event)">
         <div class="form-group">
-          <label>Test mavzusi (Sarlavha):</label>
-          <input type="text" id="test-title" placeholder="Masalan: Oliy toifa matematika 1-variant" required>
+          <label>Abituryent yo'nalishi:</label>
+          <select id="abit-topic-select" required>
+            <option value="algebra">Algebra va sonlar nazariyasi</option>
+            <option value="geometriya">Geometriya (Planimetriya / Stereometriya)</option>
+            <option value="funksiya">Funksiyalar va grafiklar</option>
+            <option value="trigonometriya">Trigonometriya</option>
+            <option value="dtm_variant">DTM Namunaviy variantlar</option>
+            <option value="majburiy">Majburiy fan bloki</option>
+          </select>
         </div>
 
-        <div class="grid-2">
-          <div class="form-group">
-            <label>Bo'lim:</label>
-            <select id="test-category" onchange="toggleCategorySpecificFields()">
-              <option value="darslik">Darsliklar bo'yicha</option>
-              <option value="abituryent">Abituryent bo'limi</option>
-              <option value="attestatsiya">Attestatsiya bo'limi</option>
-            </select>
-          </div>
-
-          <!-- Darslik uchun Sinf -->
-          <div class="form-group" id="grade-wrapper">
-            <label>Sinfni tanlang:</label>
-            <select id="test-grade">
-              <option value="5">5-sinf</option>
-              <option value="6">6-sinf</option>
-              <option value="7">7-sinf</option>
-              <option value="8">8-sinf</option>
-              <option value="9">9-sinf</option>
-              <option value="10">10-sinf</option>
-              <option value="11">11-sinf</option>
-            </select>
-          </div>
-
-          <!-- Abituriyent uchun Mavzu yo'nalishi -->
-          <div class="form-group" id="abituryent-topic-wrapper" style="display: none;">
-            <label>Abituriyent yo'nalishi:</label>
-            <select id="test-abituryent-topic">
-              <option value="algebra">Algebra va sonlar nazariyasi</option>
-              <option value="geometriya">Geometriya</option>
-              <option value="funksiya">Funksiyalar va grafiklar</option>
-              <option value="trigonometriya">Trigonometriya</option>
-              <option value="dtm_variant">DTM Namunaviy variantlar</option>
-              <option value="majburiy">Majburiy fan bloki</option>
-            </select>
-          </div>
-
-          <!-- Attestatsiya uchun Toifa yo'nalishi -->
-          <div class="form-group" id="attestatsiya-topic-wrapper" style="display: none;">
-            <label>Attestatsiya toifasi / bo'limi:</label>
-            <select id="test-attestatsiya-topic">
-              <option value="2_toifa">2-toifa (Mutaxassis)</option>
-              <option value="1_toifa">1-toifa</option>
-              <option value="oliy_toifa">Oliy toifa</option>
-              <option value="pedagogika">Pedagogik mahorat</option>
-              <option value="attestatsiya_variant">Namunaviy variantlar</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label>Test to'plami nomi:</label>
+          <input type="text" id="abit-test-title" placeholder="Masalan: Logarifmik tenglamalar (30 talik test)" required>
         </div>
 
-        <button type="submit" class="btn-submit">+ Testni Saqlash</button>
+        <button type="submit" class="btn-submit">+ Abituryent testini saqlash</button>
       </form>
     </div>
 
-    <!-- Savol Qo'shish -->
     <div class="card">
-      <h2>2. Testga Savol Qo'shish</h2>
-      <form id="question-create-form">
+      <h3 style="margin-top:0;">Abituryent bo'limidagi mavjud testlar</h3>
+      <div id="list-abit-tests" class="items-container">Yuklanmoqda...</div>
+    </div>
+  </div>
+
+  <!-- 3. ATTESTATSIYA BO'LIMI -->
+  <div id="sec-attestatsiya" class="admin-panel-section" style="display: none;">
+    <div class="card">
+      <div class="section-title">
+        <span>🎖 Attestatsiya bo'limi</span>
+        <span class="badge">Toifalar kesimida</span>
+      </div>
+
+      <form id="form-att-test" onsubmit="createAttestatsiyaTest(event)">
         <div class="form-group">
-          <label>Mavjud Testni Tanlang:</label>
-          <select id="target-test-select" required>
+          <label>Attestatsiya toifasi / yo'nalishi:</label>
+          <select id="att-topic-select" required>
+            <option value="2_toifa">2-toifa (Mutaxassis)</option>
+            <option value="1_toifa">1-toifa</option>
+            <option value="oliy_toifa">Oliy toifa</option>
+            <option value="pedagogika">Pedagogik mahorat va qonunchilik</option>
+            <option value="attestatsiya_variant">Namunaviy attestatsiya varianti</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Test to'plami nomi:</label>
+          <input type="text" id="att-test-title" placeholder="Masalan: Oliy toifa matematika 2024 (1-variant)" required>
+        </div>
+
+        <button type="submit" class="btn-submit">+ Attestatsiya testini saqlash</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Attestatsiya bo'limidagi mavjud testlar</h3>
+      <div id="list-att-tests" class="items-container">Yuklanmoqda...</div>
+    </div>
+  </div>
+
+  <!-- 4. SAVOL QO'SHISH (Barcha testlar uchun umumiy panel) -->
+  <div id="sec-questions" class="admin-panel-section" style="display: none;">
+    <div class="card">
+      <div class="section-title">
+        <span>❓ Tanlangan testga savol qo'shish</span>
+      </div>
+
+      <form id="form-add-q" onsubmit="addQuestionToTest(event)">
+        <div class="form-group">
+          <label>Qaysi testga savol qo'shmoqchisiz?</label>
+          <select id="all-tests-dropdown" required>
             <option value="">Yuklanmoqda...</option>
           </select>
         </div>
@@ -189,26 +337,14 @@
         </div>
 
         <div class="grid-2">
-          <div class="form-group">
-            <label>A varianti:</label>
-            <input type="text" id="q-opt-a" required>
-          </div>
-          <div class="form-group">
-            <label>B varianti:</label>
-            <input type="text" id="q-opt-b" required>
-          </div>
-          <div class="form-group">
-            <label>C varianti:</label>
-            <input type="text" id="q-opt-c" required>
-          </div>
-          <div class="form-group">
-            <label>D varianti:</label>
-            <input type="text" id="q-opt-d" required>
-          </div>
+          <div class="form-group"><label>A varianti:</label><input type="text" id="q-opt-a" required></div>
+          <div class="form-group"><label>B varianti:</label><input type="text" id="q-opt-b" required></div>
+          <div class="form-group"><label>C varianti:</label><input type="text" id="q-opt-c" required></div>
+          <div class="form-group"><label>D varianti:</label><input type="text" id="q-opt-d" required></div>
         </div>
 
         <div class="form-group">
-          <label>To'g'ri javob:</label>
+          <label>To'g'ri javob varianti:</label>
           <select id="q-correct" required>
             <option value="A">A</option>
             <option value="B">B</option>
@@ -217,187 +353,196 @@
           </select>
         </div>
 
-        <button type="submit" class="btn-submit">+ Savolni Saqlash</button>
+        <button type="submit" class="btn-submit">+ Savolni saqlash</button>
       </form>
     </div>
-
-    <!-- Testlar Ro'yxati -->
-    <div class="card">
-      <h2>Mavjud Testlar Ro'yxati</h2>
-      <div id="tests-list-box">Yuklanmoqda...</div>
-    </div>
   </div>
+
 </div>
 
 <script>
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  function switchAdminTab(tabName) {
-    if (tabName === 'material') {
-      document.getElementById('section-material').style.display = 'block';
-      document.getElementById('section-test').style.display = 'none';
-      document.getElementById('tab-material').classList.add('active');
-      document.getElementById('tab-test').classList.remove('active');
-    } else {
-      document.getElementById('section-material').style.display = 'none';
-      document.getElementById('section-test').style.display = 'block';
-      document.getElementById('tab-test').classList.add('active');
-      document.getElementById('tab-material').classList.remove('active');
-      loadTestsData();
+  function showSection(sectionKey, btnElement) {
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+
+    document.querySelectorAll('.admin-panel-section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(`sec-${sectionKey}`).style.display = 'block';
+
+    if (sectionKey === 'questions') {
+      loadAllTestsForDropdown();
     }
   }
 
-  function toggleCategorySpecificFields() {
-    const cat = document.getElementById('test-category').value;
-    const gradeWrap = document.getElementById('grade-wrapper');
-    const abitWrap = document.getElementById('abituryent-topic-wrapper');
-    const attWrap = document.getElementById('attestatsiya-topic-wrapper');
-
-    gradeWrap.style.display = 'none';
-    abitWrap.style.display = 'none';
-    attWrap.style.display = 'none';
-
-    if (cat === 'darslik') {
-      gradeWrap.style.display = 'block';
-    } else if (cat === 'abituryent') {
-      abitWrap.style.display = 'block';
-    } else if (cat === 'attestatsiya') {
-      attWrap.style.display = 'block';
-    }
-  }
-
-  async function loadFanlar() {
-    const fanSelect = document.getElementById('mat-fan-id');
+  // Fanlar ro'yxatini yuklash
+  async function loadFanOptions() {
     try {
       const { data: fanlar } = await _supabase.from('fanlar').select('*').order('id');
       if (fanlar) {
-        fanSelect.innerHTML = '<option value="">-- Fanni tanlang --</option>' + 
-          fanlar.map(f => `<option value="${f.id}">${f.nomi}</option>`).join('');
+        document.querySelectorAll('.fanlar-select').forEach(sel => {
+          sel.innerHTML = '<option value="">-- Fanni tanlang --</option>' + 
+            fanlar.map(f => `<option value="${f.id}">${f.nomi}</option>`).join('');
+        });
       }
     } catch (e) {
       console.error(e);
     }
   }
 
-  // Material yuklash
-  document.getElementById('material-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('btn-mat-submit');
-    btn.innerText = "Yuklanmoqda...";
-    btn.disabled = true;
-
-    try {
-      const fan_id = document.getElementById('mat-fan-id').value;
-      const gradeVal = document.getElementById('mat-grade').value;
-      const grade = gradeVal ? parseInt(gradeVal) : null;
-      const sarlavha = document.getElementById('mat-sarlavha').value;
-      const mavzu = document.getElementById('mat-mavzu').value;
-      const tavsif = document.getElementById('mat-tavsif').value;
-      const file = document.getElementById('mat-file').files[0];
-
-      if (!file) throw new Error("Fayl tanlanmadi!");
-
-      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-      const { error: uploadError } = await _supabase.storage.from('materials').upload(fileName, file);
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = _supabase.storage.from('materials').getPublicUrl(fileName);
-
-      const { error: dbError } = await _supabase.from('materials').insert([{
-        fan_id: parseInt(fan_id),
-        grade: grade,
-        sarlavha: sarlavha,
-        mavzu: mavzu,
-        tavsif: tavsif,
-        url: publicUrlData.publicUrl
-      }]);
-
-      if (dbError) throw dbError;
-
-      alert("Material va fayl muvaffaqiyatli saqlandi!");
-      document.getElementById('material-form').reset();
-    } catch (err) {
-      alert("Xatolik: " + err.message);
-    } finally {
-      btn.innerText = "Faylni yuklash va saqlash ↗";
-      btn.disabled = false;
-    }
-  });
-
-  // Testlarni yuklash
-  async function loadTestsData() {
-    const listDiv = document.getElementById('tests-list-box');
-    const selectBox = document.getElementById('target-test-select');
-
+  // Barcha testlarni bo'limlar bo'yicha yuklash
+  async function loadCategorizedTests() {
     try {
       const { data: tests, error } = await _supabase.from('math_tests').select('*').order('id', { ascending: false });
       if (error) throw error;
 
-      if (!tests || tests.length === 0) {
-        listDiv.innerHTML = "<p style='color:#64748b;'>Hozircha testlar mavjud emas.</p>";
-        selectBox.innerHTML = "<option value=''>Avval yangi test yarating</option>";
-        return;
-      }
+      const darslikTests = (tests || []).filter(t => t.category === 'darslik');
+      const abitTests = (tests || []).filter(t => t.category === 'abituryent');
+      const attTests = (tests || []).filter(t => t.category === 'attestatsiya');
 
-      selectBox.innerHTML = '<option value="">-- Testni tanlang --</option>' + 
-        tests.map(t => {
-          let detail = t.category;
-          if (t.category === 'darslik' && t.grade) detail += ` - ${t.grade}-sinf`;
-          if (t.topic) detail += ` - ${t.topic}`;
-          return `<option value="${t.id}">${t.title} (${detail})</option>`;
-        }).join('');
+      renderList('list-darslik-tests', darslikTests, t => `${t.grade}-sinf | ${t.title}`);
+      renderList('list-abit-tests', abitTests, t => `[${t.topic || 'Umumiy'}] ${t.title}`);
+      renderList('list-att-tests', attTests, t => `[${t.topic || 'Umumiy'}] ${t.title}`);
 
-      listDiv.innerHTML = tests.map(t => `
-        <div class="test-item">
-          <div>
-            <strong>${t.title}</strong>
-            <div style="font-size: 12px; color: #64748b; margin-top: 3px;">
-              Bo'lim: <b>${t.category}</b> 
-              ${t.grade ? '| Sinf: <b>' + t.grade + '-sinf</b>' : ''}
-              ${t.topic ? '| Toifa/Yo\'nalish: <b>' + t.topic + '</b>' : ''}
-            </div>
-          </div>
-          <button class="btn-del" onclick="deleteTest(${t.id})">O'chirish</button>
-        </div>
-      `).join('');
-
-    } catch (err) {
-      console.error(err);
-      listDiv.innerHTML = "<p style='color:red;'>Testlar ro'yxatini yuklab bo'lmadi.</p>";
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  // Yangi test yaratish
-  document.getElementById('test-create-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const title = document.getElementById('test-title').value;
-    const category = document.getElementById('test-category').value;
-    const grade = (category === 'darslik') ? parseInt(document.getElementById('test-grade').value) : null;
-    
-    let topic = null;
-    if (category === 'abituryent') {
-      topic = document.getElementById('test-abituryent-topic').value;
-    } else if (category === 'attestatsiya') {
-      topic = document.getElementById('test-attestatsiya-topic').value;
+  function renderList(containerId, list, titleFormatter) {
+    const container = document.getElementById(containerId);
+    if (!list || list.length === 0) {
+      container.innerHTML = "<p style='color: #64748b;'>Hozircha testlar mavjud emas.</p>";
+      return;
     }
 
-    try {
-      const { error } = await _supabase.from('math_tests').insert([{ title, category, grade, topic }]);
-      if (error) throw error;
+    container.innerHTML = list.map(t => `
+      <div class="list-item">
+        <div>
+          <strong>${titleFormatter(t)}</strong>
+        </div>
+        <button class="btn-del" onclick="deleteTest(${t.id})">O'chirish</button>
+      </div>
+    `).join('');
+  }
 
-      alert("Yangi test saqlandi!");
-      document.getElementById('test-create-form').reset();
-      toggleCategorySpecificFields();
-      loadTestsData();
+  async function loadAllTestsForDropdown() {
+    const select = document.getElementById('all-tests-dropdown');
+    try {
+      const { data: tests } = await _supabase.from('math_tests').select('*').order('id', { ascending: false });
+      if (!tests || tests.length === 0) {
+        select.innerHTML = '<option value="">Testlar mavjud emas (Avval test yarating)</option>';
+        return;
+      }
+      select.innerHTML = '<option value="">-- Testni tanlang --</option>' + 
+        tests.map(t => `<option value="${t.id}">[${t.category.toUpperCase()}] ${t.title} ${t.grade ? '(' + t.grade + '-sinf)' : ''}</option>`).join('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // Fayl yuklash
+  async function uploadDarslikFile(e) {
+    e.preventDefault();
+    const fan_id = document.getElementById('darslik-file-fan').value;
+    const grade = document.getElementById('darslik-file-grade').value;
+    const sarlavha = document.getElementById('darslik-file-title').value;
+    const mavzu = document.getElementById('darslik-file-topic').value;
+    const file = document.getElementById('darslik-file-input').files[0];
+
+    try {
+      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+      const { error: upErr } = await _supabase.storage.from('materials').upload(fileName, file);
+      if (upErr) throw upErr;
+
+      const { data: pUrl } = _supabase.storage.from('materials').getPublicUrl(fileName);
+
+      const { error: dbErr } = await _supabase.from('materials').insert([{
+        fan_id: parseInt(fan_id),
+        grade: parseInt(grade),
+        sarlavha: sarlavha,
+        mavzu: mavzu,
+        url: pUrl.publicUrl
+      }]);
+      if (dbErr) throw dbErr;
+
+      alert("Darslik fayli muvaffaqiyatli saqlandi!");
+      document.getElementById('form-darslik-file').reset();
     } catch (err) {
       alert("Xatolik: " + err.message);
     }
-  });
+  }
+
+  // Darslik testi yaratish
+  async function createDarslikTest(e) {
+    e.preventDefault();
+    const grade = parseInt(document.getElementById('darslik-test-grade').value);
+    const title = document.getElementById('darslik-test-title').value;
+
+    try {
+      const { error } = await _supabase.from('math_tests').insert([{
+        title,
+        category: 'darslik',
+        grade
+      }]);
+      if (error) throw error;
+
+      alert("Darslik testi yaratildi!");
+      document.getElementById('darslik-test-title').value = '';
+      loadCategorizedTests();
+    } catch (err) {
+      alert("Xatolik: " + err.message);
+    }
+  }
+
+  // Abituryent testi yaratish
+  async function createAbituryentTest(e) {
+    e.preventDefault();
+    const topic = document.getElementById('abit-topic-select').value;
+    const title = document.getElementById('abit-test-title').value;
+
+    try {
+      const { error } = await _supabase.from('math_tests').insert([{
+        title,
+        category: 'abituryent',
+        topic
+      }]);
+      if (error) throw error;
+
+      alert("Abituryent testi yaratildi!");
+      document.getElementById('abit-test-title').value = '';
+      loadCategorizedTests();
+    } catch (err) {
+      alert("Xatolik: " + err.message);
+    }
+  }
+
+  // Attestatsiya testi yaratish
+  async function createAttestatsiyaTest(e) {
+    e.preventDefault();
+    const topic = document.getElementById('att-topic-select').value;
+    const title = document.getElementById('att-test-title').value;
+
+    try {
+      const { error } = await _supabase.from('math_tests').insert([{
+        title,
+        category: 'attestatsiya',
+        topic
+      }]);
+      if (error) throw error;
+
+      alert("Attestatsiya testi yaratildi!");
+      document.getElementById('att-test-title').value = '';
+      loadCategorizedTests();
+    } catch (err) {
+      alert("Xatolik: " + err.message);
+    }
+  }
 
   // Savol qo'shish
-  document.getElementById('question-create-form').addEventListener('submit', async (e) => {
+  async function addQuestionToTest(e) {
     e.preventDefault();
-    const test_id = document.getElementById('target-test-select').value;
+    const test_id = document.getElementById('all-tests-dropdown').value;
     const question_text = document.getElementById('q-text').value;
     const option_a = document.getElementById('q-opt-a').value;
     const option_b = document.getElementById('q-opt-b').value;
@@ -406,7 +551,7 @@
     const correct_answer = document.getElementById('q-correct').value;
 
     if (!test_id) {
-      alert("Test tanlanmagan!");
+      alert("Iltimos, avval testni tanlang!");
       return;
     }
 
@@ -420,7 +565,6 @@
         option_d,
         correct_answer
       }]);
-
       if (error) throw error;
 
       alert("Savol testga qo'shildi!");
@@ -432,14 +576,14 @@
     } catch (err) {
       alert("Xatolik: " + err.message);
     }
-  });
+  }
 
   async function deleteTest(id) {
-    if (!confirm("Test va uning barcha savollarini o'chirishni tasdiqlaysizmi?")) return;
+    if (!confirm("Test va unga tegishli barcha savollarni o'chirishni tasdiqlaysizmi?")) return;
     try {
       await _supabase.from('math_questions').delete().eq('test_id', id);
       await _supabase.from('math_tests').delete().eq('id', id);
-      loadTestsData();
+      loadCategorizedTests();
     } catch (err) {
       alert("O'chirishda xatolik: " + err.message);
     }
@@ -449,7 +593,8 @@
     window.location.href = "index.html";
   }
 
-  loadFanlar();
+  loadFanOptions();
+  loadCategorizedTests();
 </script>
 </body>
 </html>
