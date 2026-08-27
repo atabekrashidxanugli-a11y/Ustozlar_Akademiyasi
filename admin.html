@@ -18,146 +18,29 @@
       min-height: 100vh;
     }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .btn-back {
-      text-decoration: none;
-      color: #64748b;
-      font-weight: 600;
-      font-size: 14px;
-    }
+    .container { max-width: 850px; margin: 0 auto; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-back { text-decoration: none; color: #64748b; font-weight: 600; font-size: 14px; }
     .btn-back:hover { color: #2563eb; }
+    .btn-logout { background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
 
-    .btn-logout {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 13px;
-    }
+    .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab-btn { flex: 1; padding: 12px; border: none; background: #e2e8f0; color: #334155; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+    .tab-btn.active { background: #2563eb; color: white; }
 
-    /* Tab Tugmalari */
-    .admin-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    .card { background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; margin-bottom: 25px; }
+    h2 { margin-top: 0; margin-bottom: 20px; font-size: 20px; color: #0f172a; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; color: #334155; }
+    input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; font-family: inherit; }
+    input:focus, select:focus, textarea:focus { border-color: #2563eb; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-    .tab-btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      background: #e2e8f0;
-      color: #334155;
-      font-weight: 600;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: 0.2s;
-    }
-
-    .tab-btn.active {
-      background: #2563eb;
-      color: white;
-    }
-
-    .card {
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      border: 1px solid #e2e8f0;
-      margin-bottom: 25px;
-    }
-
-    h2 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-size: 22px;
-      color: #0f172a;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: 14px;
-      color: #334155;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 14px;
-      box-sizing: border-box;
-      outline: none;
-      font-family: inherit;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: #2563eb;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .btn-submit {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      transition: 0.2s;
-      margin-top: 10px;
-    }
+    .btn-submit { background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; margin-top: 10px; }
     .btn-submit:hover { background: #1d4ed8; }
 
-    .test-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      background: #f8fafc;
-    }
-
-    .btn-del {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
+    .test-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px; background: #f8fafc; }
+    .btn-del { background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -168,13 +51,12 @@
     <button class="btn-logout" onclick="logout()">Chiqish</button>
   </div>
 
-  <!-- Bo'lim tanlash tugmalari -->
   <div class="admin-tabs">
     <button id="tab-material" class="tab-btn active" onclick="switchAdminTab('material')">Fayl Yuklash</button>
     <button id="tab-test" class="tab-btn" onclick="switchAdminTab('test')">Testlar Boshqaruvi</button>
   </div>
 
-  <!-- 1-TAB: MATERIAL VA FAYL YUKLASH -->
+  <!-- 1-TAB: FAYL YUKLASH -->
   <div id="section-material">
     <div class="card">
       <h2>Yangi material va fayl yuklash</h2>
@@ -186,7 +68,6 @@
               <option value="">-- Fanni tanlang --</option>
             </select>
           </div>
-
           <div class="form-group">
             <label>Sinfni tanlang:</label>
             <select id="mat-grade">
@@ -204,12 +85,12 @@
 
         <div class="form-group">
           <label>Sarlavha:</label>
-          <input type="text" id="mat-sarlavha" placeholder="Masalan: 6-sinf Matematika darslik" required>
+          <input type="text" id="mat-sarlavha" placeholder="Masalan: Attestatsiya savollar to'plami" required>
         </div>
 
         <div class="form-group">
           <label>Mavzu:</label>
-          <input type="text" id="mat-mavzu" placeholder="Masalan: Oddiy kasrlar">
+          <input type="text" id="mat-mavzu" placeholder="Masalan: Oliy toifa uchun metodik qo'llanma">
         </div>
 
         <div class="form-group">
@@ -229,26 +110,25 @@
 
   <!-- 2-TAB: TESTLAR BOSHQARUVI -->
   <div id="section-test" style="display: none;">
-    
-    <!-- Test Yaratish -->
     <div class="card">
       <h2>1. Yangi Test Yaratish</h2>
       <form id="test-create-form">
         <div class="form-group">
           <label>Test mavzusi (Sarlavha):</label>
-          <input type="text" id="test-title" placeholder="Masalan: 1-Bob. Natural sonlar" required>
+          <input type="text" id="test-title" placeholder="Masalan: Oliy toifa matematika 1-variant" required>
         </div>
 
         <div class="grid-2">
           <div class="form-group">
             <label>Bo'lim:</label>
-            <select id="test-category" onchange="toggleGradeField()">
+            <select id="test-category" onchange="toggleCategorySpecificFields()">
               <option value="darslik">Darsliklar bo'yicha</option>
               <option value="abituryent">Abituryent bo'limi</option>
               <option value="attestatsiya">Attestatsiya bo'limi</option>
             </select>
           </div>
 
+          <!-- Darslik uchun Sinf -->
           <div class="form-group" id="grade-wrapper">
             <label>Sinfni tanlang:</label>
             <select id="test-grade">
@@ -259,6 +139,31 @@
               <option value="9">9-sinf</option>
               <option value="10">10-sinf</option>
               <option value="11">11-sinf</option>
+            </select>
+          </div>
+
+          <!-- Abituriyent uchun Mavzu yo'nalishi -->
+          <div class="form-group" id="abituryent-topic-wrapper" style="display: none;">
+            <label>Abituriyent yo'nalishi:</label>
+            <select id="test-abituryent-topic">
+              <option value="algebra">Algebra va sonlar nazariyasi</option>
+              <option value="geometriya">Geometriya</option>
+              <option value="funksiya">Funksiyalar va grafiklar</option>
+              <option value="trigonometriya">Trigonometriya</option>
+              <option value="dtm_variant">DTM Namunaviy variantlar</option>
+              <option value="majburiy">Majburiy fan bloki</option>
+            </select>
+          </div>
+
+          <!-- Attestatsiya uchun Toifa yo'nalishi -->
+          <div class="form-group" id="attestatsiya-topic-wrapper" style="display: none;">
+            <label>Attestatsiya toifasi / bo'limi:</label>
+            <select id="test-attestatsiya-topic">
+              <option value="2_toifa">2-toifa (Mutaxassis)</option>
+              <option value="1_toifa">1-toifa</option>
+              <option value="oliy_toifa">Oliy toifa</option>
+              <option value="pedagogika">Pedagogik mahorat</option>
+              <option value="attestatsiya_variant">Namunaviy variantlar</option>
             </select>
           </div>
         </div>
@@ -318,10 +223,9 @@
 
     <!-- Testlar Ro'yxati -->
     <div class="card">
-      <h2>Mavjud Matematika Testlari</h2>
+      <h2>Mavjud Testlar Ro'yxati</h2>
       <div id="tests-list-box">Yuklanmoqda...</div>
     </div>
-
   </div>
 </div>
 
@@ -343,25 +247,39 @@
     }
   }
 
-  function toggleGradeField() {
+  function toggleCategorySpecificFields() {
     const cat = document.getElementById('test-category').value;
-    document.getElementById('grade-wrapper').style.display = (cat === 'darslik') ? 'block' : 'none';
+    const gradeWrap = document.getElementById('grade-wrapper');
+    const abitWrap = document.getElementById('abituryent-topic-wrapper');
+    const attWrap = document.getElementById('attestatsiya-topic-wrapper');
+
+    gradeWrap.style.display = 'none';
+    abitWrap.style.display = 'none';
+    attWrap.style.display = 'none';
+
+    if (cat === 'darslik') {
+      gradeWrap.style.display = 'block';
+    } else if (cat === 'abituryent') {
+      abitWrap.style.display = 'block';
+    } else if (cat === 'attestatsiya') {
+      attWrap.style.display = 'block';
+    }
   }
 
   async function loadFanlar() {
     const fanSelect = document.getElementById('mat-fan-id');
     try {
-      const { data: fanlar, error } = await _supabase.from('fanlar').select('*').order('id');
-      if (error) throw error;
-      
-      fanSelect.innerHTML = '<option value="">-- Fanni tanlang --</option>' + 
-        fanlar.map(f => `<option value="${f.id}">${f.nomi}</option>`).join('');
+      const { data: fanlar } = await _supabase.from('fanlar').select('*').order('id');
+      if (fanlar) {
+        fanSelect.innerHTML = '<option value="">-- Fanni tanlang --</option>' + 
+          fanlar.map(f => `<option value="${f.id}">${f.nomi}</option>`).join('');
+      }
     } catch (e) {
       console.error(e);
     }
   }
 
-  // Fayl yuklash (Sinf qo'shilgan holatda)
+  // Material yuklash
   document.getElementById('material-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('btn-mat-submit');
@@ -375,20 +293,15 @@
       const sarlavha = document.getElementById('mat-sarlavha').value;
       const mavzu = document.getElementById('mat-mavzu').value;
       const tavsif = document.getElementById('mat-tavsif').value;
-      const fileInput = document.getElementById('mat-file');
-      const file = fileInput.files[0];
+      const file = document.getElementById('mat-file').files[0];
 
       if (!file) throw new Error("Fayl tanlanmadi!");
 
       const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-      const { data: uploadData, error: uploadError } = await _supabase.storage
-        .from('materials')
-        .upload(fileName, file);
-
+      const { error: uploadError } = await _supabase.storage.from('materials').upload(fileName, file);
       if (uploadError) throw uploadError;
 
       const { data: publicUrlData } = _supabase.storage.from('materials').getPublicUrl(fileName);
-      const fileUrl = publicUrlData.publicUrl;
 
       const { error: dbError } = await _supabase.from('materials').insert([{
         fan_id: parseInt(fan_id),
@@ -396,14 +309,13 @@
         sarlavha: sarlavha,
         mavzu: mavzu,
         tavsif: tavsif,
-        url: fileUrl
+        url: publicUrlData.publicUrl
       }]);
 
       if (dbError) throw dbError;
 
       alert("Material va fayl muvaffaqiyatli saqlandi!");
       document.getElementById('material-form').reset();
-
     } catch (err) {
       alert("Xatolik: " + err.message);
     } finally {
@@ -412,6 +324,7 @@
     }
   });
 
+  // Testlarni yuklash
   async function loadTestsData() {
     const listDiv = document.getElementById('tests-list-box');
     const selectBox = document.getElementById('target-test-select');
@@ -427,13 +340,22 @@
       }
 
       selectBox.innerHTML = '<option value="">-- Testni tanlang --</option>' + 
-        tests.map(t => `<option value="${t.id}">${t.title} (${t.category}${t.grade ? ' - ' + t.grade + '-sinf' : ''})</option>`).join('');
+        tests.map(t => {
+          let detail = t.category;
+          if (t.category === 'darslik' && t.grade) detail += ` - ${t.grade}-sinf`;
+          if (t.topic) detail += ` - ${t.topic}`;
+          return `<option value="${t.id}">${t.title} (${detail})</option>`;
+        }).join('');
 
       listDiv.innerHTML = tests.map(t => `
         <div class="test-item">
           <div>
             <strong>${t.title}</strong>
-            <div style="font-size: 12px; color: #64748b;">${t.category} ${t.grade ? ' | ' + t.grade + '-sinf' : ''}</div>
+            <div style="font-size: 12px; color: #64748b; margin-top: 3px;">
+              Bo'lim: <b>${t.category}</b> 
+              ${t.grade ? '| Sinf: <b>' + t.grade + '-sinf</b>' : ''}
+              ${t.topic ? '| Toifa/Yo\'nalish: <b>' + t.topic + '</b>' : ''}
+            </div>
           </div>
           <button class="btn-del" onclick="deleteTest(${t.id})">O'chirish</button>
         </div>
@@ -445,25 +367,34 @@
     }
   }
 
+  // Yangi test yaratish
   document.getElementById('test-create-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('test-title').value;
     const category = document.getElementById('test-category').value;
     const grade = (category === 'darslik') ? parseInt(document.getElementById('test-grade').value) : null;
+    
+    let topic = null;
+    if (category === 'abituryent') {
+      topic = document.getElementById('test-abituryent-topic').value;
+    } else if (category === 'attestatsiya') {
+      topic = document.getElementById('test-attestatsiya-topic').value;
+    }
 
     try {
-      const { error } = await _supabase.from('math_tests').insert([{ title, category, grade }]);
+      const { error } = await _supabase.from('math_tests').insert([{ title, category, grade, topic }]);
       if (error) throw error;
 
       alert("Yangi test saqlandi!");
       document.getElementById('test-create-form').reset();
-      toggleGradeField();
+      toggleCategorySpecificFields();
       loadTestsData();
     } catch (err) {
       alert("Xatolik: " + err.message);
     }
   });
 
+  // Savol qo'shish
   document.getElementById('question-create-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const test_id = document.getElementById('target-test-select').value;
